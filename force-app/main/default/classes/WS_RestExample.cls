@@ -1,5 +1,7 @@
 // -> https://{instance}.salesforce.com/services/apexrest/.
 // -> https://gurkgamer-example-dev-ed.my.salesforce.com/services/apexrest/Contact/submitContact
+// -> Docu: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm
+// -> Trailhead: https://trailhead.salesforce.com/content/learn/modules/apex_integration_services/apex_integration_webservices
 // -> REST API supports OAuth 2.0 
 @RestResource(urlMapping='/Contact/*')
 global with sharing class WS_RestExample 
