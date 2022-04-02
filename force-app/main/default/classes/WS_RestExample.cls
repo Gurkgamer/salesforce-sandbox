@@ -24,7 +24,6 @@ global with sharing class WS_RestExample
             Savepoint sp = Database.setSavepoint(); // Save state de la BBDD por si falla el DML
             try
             {
-                System.debug('Normal');
                 insert newContact;
                 result.statusCode = 201;
                 ContactSuccessResponse resultado = new ContactSuccessResponse(newContact.Id, 'Contacto insertado correctamente.');
@@ -32,7 +31,6 @@ global with sharing class WS_RestExample
             }
             catch(DMLException dmlError)
             {
-                System.debug('DML Exception');
                 result.statusCode = 500;
                 ContactErrorResponse errorResponse = new ContactErrorResponse(newContact, dmlError.getMessage(), dmlError.getTypeName());
                 result.responseBody = Blob.valueOf(JSON.serialize(errorResponse));
@@ -41,7 +39,6 @@ global with sharing class WS_RestExample
             }
             catch(Exception exceptionError)
             {
-                System.debug('Exception');
                 result.statusCode = 500;
                 ContactErrorResponse errorResponse = new ContactErrorResponse(newContact, exceptionError.getMessage(), exceptionError.getTypeName());
                 result.responseBody = Blob.valueOf(JSON.serialize(errorResponse));
@@ -50,7 +47,6 @@ global with sharing class WS_RestExample
         }
         else
         {
-            System.debug('Sin permiso');
             result.statusCode = 500;
             ContactErrorResponse errorResponse = new ContactErrorResponse(newContact, 'FIELD NOT AVAILABLE', 'Insufficient field-level access permissions.');
             result.responseBody = Blob.valueOf(JSON.serialize(errorResponse));

@@ -1,5 +1,5 @@
 @isTest
-public class WS_RestExampleTest 
+public class WS_RestExampleTest
 {
     @isTest
     static void submitContactTest()
@@ -13,7 +13,7 @@ public class WS_RestExampleTest
         String phone        = '00112233';
 
         RestRequest request = new RestRequest();
-        request.requestUri = 'https://gurkgamer-example-dev-ed.my.salesforce.com/services/apexrest/Contact/submitContact';
+        request.requestUri = '/services/apexrest/Contact/Roland/submitContact';
         request.httpMethod = 'POST';
         request.requestBody = Blob.valueOf('{"firstName":"' + firstName + '","lastName":"' + lastName + '","phoneNumber":"' + phone + '","email":"' + email + '"}');
         RestContext.request = request;
@@ -23,8 +23,6 @@ public class WS_RestExampleTest
         Test.startTest();
         WS_RestExample.submitContact(firstName, lastName, email, phone);
         Test.stopTest();
-
-        System.debug(RestContext.response);
 
         List<Contact> result = [SELECT FirstName, LastName, Phone, Email FROM Contact WHERE Id NOT IN :bbddContacts];
 
