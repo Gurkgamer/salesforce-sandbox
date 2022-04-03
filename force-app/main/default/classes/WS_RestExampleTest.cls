@@ -23,6 +23,8 @@ public class WS_RestExampleTest
         WS_RestExample.submitContact(firstName, lastName, email, phone);
         Test.stopTest();
 
+        System.assertEquals(201, RestContext.response.statusCode, 'Unexpected Satus Code');
+
         List<Contact> result = [SELECT FirstName, LastName, Phone, Email FROM Contact WHERE Id NOT IN :bbddContacts];
 
         System.assert(!result.isEmpty(),        'The Contact did not enter the BBDD');
@@ -31,9 +33,8 @@ public class WS_RestExampleTest
         System.assertEquals(firstName, result.get(0).FirstName, 'The First Name value is not correct');
         System.assertEquals(lastName, result.get(0).LastName,   'The Last Name value is not correct');
         System.assertEquals(phone, result.get(0).Phone,         'The Phone value is not correct');
-        System.assertEquals(email, result.get(0).Email,         'THe email value is not correct');
-
-        // TODO - Mirar valores de RestContext.response
+        System.assertEquals(email, result.get(0).Email,         'The email value is not correct');
+        
     }
 
     @isTest
@@ -75,9 +76,4 @@ public class WS_RestExampleTest
         // TODO - Por ahora no se puede crear un perfil en test para generar uno sin permisos de campo. Se descarta crear uno especifico para un test
     }
 
-    @isTest
-    static void submitContactTest_Exception_KO()
-    {
-        // TODO - Buscar como provocar una excepcion en el web service que no sea DML
-    }
 }

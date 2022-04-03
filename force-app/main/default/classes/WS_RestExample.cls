@@ -10,11 +10,11 @@ global with sharing class WS_RestExample
     @HttpPost
     global static void submitContact(String firstName, String lastName, String email, String phoneNumber)
     {
-        Contact newContact = new Contact();
-        newContact.FirstName = firstName;
-        newContact.LastName = lastName;
-        newContact.Phone = phoneNumber;
-        newContact.Email = email;
+        Contact newContact      = new Contact();
+        newContact.FirstName    = firstName;
+        newContact.LastName     = lastName;
+        newContact.Phone        = phoneNumber;
+        newContact.Email        = email;
 
         RestResponse result = RestContext.response;
         result.addHeader('Content-Type', 'application/json');
@@ -29,20 +29,13 @@ global with sharing class WS_RestExample
                 ContactSuccessResponse resultado = new ContactSuccessResponse(newContact.Id, 'Contacto insertado correctamente.');
                 result.responseBody = Blob.valueOf(JSON.serialize(resultado));
             }
-            catch(DMLException dmlError)
-            {
-                result.statusCode = 500;
-                ContactErrorResponse errorResponse = new ContactErrorResponse(newContact, dmlError.getMessage(), dmlError.getTypeName());
-                result.responseBody = Blob.valueOf(JSON.serialize(errorResponse));
-                Database.rollback(sp);
-
-            }
             catch(Exception exceptionError)
             {
                 result.statusCode = 500;
                 ContactErrorResponse errorResponse = new ContactErrorResponse(newContact, exceptionError.getMessage(), exceptionError.getTypeName());
                 result.responseBody = Blob.valueOf(JSON.serialize(errorResponse));
                 Database.rollback(sp);
+                Logger.log(exceptionError);
             }
         }
         else
@@ -94,5 +87,4 @@ global with sharing class WS_RestExample
             recordValues    = receivedRecord;
         }
     }
-
 }
