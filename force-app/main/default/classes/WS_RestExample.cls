@@ -2,9 +2,9 @@
 // -> https://gurkgamer-example-dev-ed.my.salesforce.com/services/apexrest/Contact/submitContact
 // -> Docu: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm
 // -> Trailhead: https://trailhead.salesforce.com/content/learn/modules/apex_integration_services/apex_integration_webservices
-// -> REST API supports OAuth 2.0 
+// -> REST API supports OAuth 2.0
 @RestResource(urlMapping='/Contact/*')
-global with sharing class WS_RestExample 
+global with sharing class WS_RestExample
 {
 
     @HttpPost
@@ -18,7 +18,7 @@ global with sharing class WS_RestExample
 
         RestResponse result = RestContext.response;
         result.addHeader('Content-Type', 'application/json');
-        
+
         if(checkContactAccssible())
         {
             Savepoint sp = Database.setSavepoint(); // Save state de la BBDD por si falla el DML
@@ -48,7 +48,7 @@ global with sharing class WS_RestExample
         else
         {
             result.statusCode = 500;
-            ContactErrorResponse errorResponse = new ContactErrorResponse(newContact, 'FIELD NOT AVAILABLE', 'Insufficient field-level access permissions.');
+            ContactErrorResponse errorResponse = new ContactErrorResponse(newContact, 'FIELD NOT AVAILABLE', 'Insufficient field-level access.');
             result.responseBody = Blob.valueOf(JSON.serialize(errorResponse));
         }
     }
@@ -56,16 +56,19 @@ global with sharing class WS_RestExample
     private static Boolean checkContactAccssible()
     {
         return (
-            Schema.SObjectType.Contact.isAccessible()                   && 
+            Schema.SObjectType.Contact.isAccessible()                   &&
             Schema.SObjectType.Contact.fields.FirstName.isAccessible()  &&
             Schema.SObjectType.Contact.fields.LastName.isAccessible()   &&
             Schema.SObjectType.Contact.fields.Phone.isAccessible()      &&
             Schema.SObjectType.Contact.fields.Email.isAccessible()      );
     }
 
+    @TestVisible
     class ContactSuccessResponse
     {
+        @TestVisible
         String message;
+        @TestVisible
         String salesforceId;
 
         ContactSuccessResponse(String recordId, String customMessage)
@@ -75,9 +78,12 @@ global with sharing class WS_RestExample
         }
     }
 
+    @TestVisible
     class ContactErrorResponse
     {
+        @TestVisible
         String errorCode;
+        @TestVisible
         String message;
         Contact recordValues;
 

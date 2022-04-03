@@ -2,8 +2,8 @@
 public class WS_RestExampleTest
 {
     @isTest
-    static void submitContactTest()
-    {   
+    static void submitContactTest_OK()
+    {
         List<Contact> bbddContacts = [SELECT Id FROM Contact];
 
         // Contact data for the REST service
@@ -19,7 +19,6 @@ public class WS_RestExampleTest
         RestContext.request = request;
         RestContext.response = new RestResponse();
 
-
         Test.startTest();
         WS_RestExample.submitContact(firstName, lastName, email, phone);
         Test.stopTest();
@@ -34,6 +33,51 @@ public class WS_RestExampleTest
         System.assertEquals(phone, result.get(0).Phone,         'The Phone value is not correct');
         System.assertEquals(email, result.get(0).Email,         'THe email value is not correct');
 
+        // TODO - Mirar valores de RestContext.response
+    }
 
+    @isTest
+    static void submitContactTest_NoLastName_KO()
+    {
+        List<Contact> bbddContacts = [SELECT Id FROM Contact];
+
+        // Contact data for the REST service
+        String firstName    = 'Pedro';
+        String lastName;
+        String email        = 'testemail@madeup.com';
+        String phone        = '00112233';
+
+        RestRequest request = new RestRequest();
+        request.requestUri = '/services/apexrest/Contact/Roland/submitContact';
+        request.httpMethod = 'POST';
+        request.requestBody = Blob.valueOf('{"firstName":"' + firstName + '","lastName":"' + lastName + '","phoneNumber":"' + phone + '","email":"' + email + '"}');
+        RestContext.request = request;
+        RestContext.response = new RestResponse();
+
+        Test.startTest();
+        WS_RestExample.submitContact(firstName, lastName, email, phone);
+        Test.stopTest();
+
+        WS_RestExample.ContactErrorResponse errorResponse = (WS_RestExample.ContactErrorResponse) JSON.deserialize(RestContext.response.responseBody.toString(), WS_RestExample.ContactErrorResponse.class);
+
+        System.assertEquals(500, RestContext.response.statusCode,               'The Status code number is not correct');
+        System.assert(errorResponse.message.contains('REQUIRED_FIELD_MISSING'), 'The error reason is not correct');
+        System.assertEquals('System.DmlException', errorResponse.errorCode,     'The Error Type did not match');
+
+        List<Contact> result = [SELECT FirstName, LastName, Phone, Email FROM Contact WHERE Id NOT IN :bbddContacts];
+
+        System.assert(result.isEmpty(), 'The Contact should have not entered the BBDD');
+    }
+
+    @isTest
+    static void submitContactTest_FieldPermission_KO()
+    {
+        // TODO - Por ahora no se puede crear un perfil en test para generar uno sin permisos de campo. Se descarta crear uno especifico para un test
+    }
+
+    @isTest
+    static void submitContactTest_Exception_KO()
+    {
+        // TODO - Buscar como provocar una excepcion en el web service que no sea DML
     }
 }
