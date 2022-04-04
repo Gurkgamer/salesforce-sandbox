@@ -23,7 +23,7 @@ public class WS_RestExampleTest
         RestContext.response = new RestResponse();
 
         Test.startTest();
-        WS_RestExample.submitContact(firstName, lastName, email, phone);
+        WS_RestExample.submitContact();
         Test.stopTest();
 
         System.assertEquals(201, RestContext.response.statusCode, 'Unexpected Satus Code');
@@ -47,7 +47,7 @@ public class WS_RestExampleTest
 
         // Contact data for the REST service
         String firstName    = 'Pedro';
-        String lastName;
+        String lastName     = '';
         String email        = 'testemail@madeup.com';
         String phone        = '00112233';
 
@@ -59,14 +59,14 @@ public class WS_RestExampleTest
         RestContext.response = new RestResponse();
 
         Test.startTest();
-        WS_RestExample.submitContact(firstName, lastName, email, phone);
+        WS_RestExample.submitContact();
         Test.stopTest();
 
         WS_RestExample.ContactErrorResponse errorResponse = (WS_RestExample.ContactErrorResponse) JSON.deserialize(RestContext.response.responseBody.toString(), WS_RestExample.ContactErrorResponse.class);
 
         System.assertEquals(500, RestContext.response.statusCode,               'The Status code number is not correct');
-        System.assert(errorResponse.message.contains('REQUIRED_FIELD_MISSING'), 'The error reason is not correct');
-        System.assertEquals('System.DmlException', errorResponse.errorCode,     'The Error Type did not match');
+        System.assert(errorResponse.message.contains('REQUIRED_FIELD_MISSING'), 'The error reason is not correct. It should contain REQUIRED_FIELD_MISSING: ' + errorResponse.message);
+        System.assertEquals('System.DmlException', errorResponse.errorCode,     'The Error Type is not a DmlException');
 
         List<Contact> result = [SELECT FirstName, LastName, Phone, Email FROM Contact WHERE Id NOT IN :bbddContacts];
 
@@ -74,9 +74,26 @@ public class WS_RestExampleTest
     }
 
     @isTest
-    static void submitContactTest_FieldPermission_KO()
+    static void submitContactTest_RequestBodyEmpty_KO()
     {
         // TODO - Por ahora no se puede crear un perfil en test para generar uno sin permisos de campo. Se descarta crear uno especifico para un test
+
+        RestRequest request = new RestRequest();
+        request.requestUri = '/services/apexrest/Contact/submitContact';
+        request.httpMethod = 'POST';
+        request.requestBody = Blob.valueOf('');
+        RestContext.request = request;
+        RestContext.response = new RestResponse();
+
+        Test.startTest();
+        WS_RestExample.submitContact();
+        Test.stopTest();
+
+        WS_RestExample.ContactErrorResponse errorResponse = (WS_RestExample.ContactErrorResponse) JSON.deserialize(RestContext.response.responseBody.toString(), WS_RestExample.ContactErrorResponse.class);
+
+        System.assertEquals(500, RestContext.response.statusCode,       'The Status code number is not correct');
+        System.assert(errorResponse.message.contains('EMPTY_BODY'),     'The error reason is not correct. It should contain EMPTY_BODY: ' + errorResponse.message);
+        System.assertEquals('String.IsBlank', errorResponse.errorCode,  'The Error Type did not match');
     }
 
 }

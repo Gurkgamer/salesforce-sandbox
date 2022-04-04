@@ -1,23 +1,34 @@
-// -> https://{instance}.salesforce.com/services/apexrest/.
-// -> https://gurkgamer-example-dev-ed.my.salesforce.com/services/apexrest/Contact/submitContact
+// -> https://{instance}.salesforce.com/services/apexrest/Contact/submitContact
 // -> Docu: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm
 // -> Trailhead: https://trailhead.salesforce.com/content/learn/modules/apex_integration_services/apex_integration_webservices
-// -> REST API supports OAuth 2.0
+// -> REST API supports OAuth 2.0 -> Connected APP
 @RestResource(urlMapping='/Contact/*')
 global with sharing class WS_RestExample
 {
 
     @HttpPost
-    global static void submitContact(String firstName, String lastName, String email, String phoneNumber)
+    global static void submitContact()
     {
-        Contact newContact      = new Contact();
-        newContact.FirstName    = firstName;
-        newContact.LastName     = lastName;
-        newContact.Phone        = phoneNumber;
-        newContact.Email        = email;
+        String requestBody = RestContext.request.requestBody.toString();
 
         RestResponse result = RestContext.response;
         result.addHeader('Content-Type', 'application/json');
+
+        if(String.isBlank(requestBody))
+        {
+            result.statusCode = 500;
+            ContactErrorResponse resultado = new ContactErrorResponse(null, 'EMPTY_BODY', 'String.IsBlank');
+            result.responseBody = Blob.valueOf(JSON.serialize(resultado));
+            return;
+        }
+
+        Map<String,Object> receivedRecord = (Map<String,Object>) JSON.deserializeUntyped(requestBody);
+
+        Contact newContact      = new Contact();
+        newContact.FirstName    = String.valueOf(receivedRecord.get('firstName'));
+        newContact.LastName     = String.valueOf(receivedRecord.get('lastName'));
+        newContact.Phone        = String.valueOf(receivedRecord.get('phoneNumber'));
+        newContact.Email        = String.valueOf(receivedRecord.get('email'));
 
         if(checkContactAccssible())
         {
