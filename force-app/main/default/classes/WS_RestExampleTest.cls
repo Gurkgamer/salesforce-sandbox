@@ -1,3 +1,6 @@
+/**
+
+**/
 @isTest
 public class WS_RestExampleTest
 {
@@ -13,7 +16,7 @@ public class WS_RestExampleTest
         String phone        = '00112233';
 
         RestRequest request = new RestRequest();
-        request.requestUri = '/services/apexrest/Contact/Roland/submitContact';
+        request.requestUri = '/services/apexrest/Contact/submitContact';
         request.httpMethod = 'POST';
         request.requestBody = Blob.valueOf('{"firstName":"' + firstName + '","lastName":"' + lastName + '","phoneNumber":"' + phone + '","email":"' + email + '"}');
         RestContext.request = request;
@@ -34,7 +37,7 @@ public class WS_RestExampleTest
         System.assertEquals(lastName, result.get(0).LastName,   'The Last Name value is not correct');
         System.assertEquals(phone, result.get(0).Phone,         'The Phone value is not correct');
         System.assertEquals(email, result.get(0).Email,         'The email value is not correct');
-        
+
     }
 
     @isTest
@@ -49,7 +52,7 @@ public class WS_RestExampleTest
         String phone        = '00112233';
 
         RestRequest request = new RestRequest();
-        request.requestUri = '/services/apexrest/Contact/Roland/submitContact';
+        request.requestUri = '/services/apexrest/Contact/submitContact';
         request.httpMethod = 'POST';
         request.requestBody = Blob.valueOf('{"firstName":"' + firstName + '","lastName":"' + lastName + '","phoneNumber":"' + phone + '","email":"' + email + '"}');
         RestContext.request = request;
