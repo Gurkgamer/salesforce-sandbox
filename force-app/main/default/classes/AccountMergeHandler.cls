@@ -14,8 +14,8 @@ public with sharing class AccountMergeHandler
     /**
     * @description      Returns a map with merged Accounts and the list of the deleted accounts that merged with that Master record
     * @author           jgallaga | 05/04/2022
-    * @param            Map<Id, Account> updatedRecordsByMerge
-    * @return           Map<Account, List<Account>>
+    * @param            Map<Id,Account> updatedRecordsByMerge
+    * @return           Map<Account,List<Account>>
     **/
     public static Map<Account,List<Account>> getMergedAccountRecords(Map<Id,Account> updatedRecordsByMerge)
     {
@@ -49,8 +49,8 @@ public with sharing class AccountMergeHandler
     }
 
     /**
-    * @description      Si se cumplen las condiciones indicadas, la cuenta unificado recibe los valores correctos a partir del borrado.
-    *                   Se devuelve la lista de aquellas cuentas unificadas que han necesitado corregirse.
+    * @description      For each Deleted Account from the Merged Account the values of the field of interested are compared to default to the wanted values
+    *                   Resturns a list of modified Accounts 
     * @author           jgallaga | 05/04/2022
     * @param            Map<Account,List<Account>> mergedAccounts
     * @return           List<Account>
@@ -75,6 +75,7 @@ public with sharing class AccountMergeHandler
             {
                 if(String.isBlank(nextMergedAccount.AccountNumber) && String.isNotBlank(deletedAccount.AccountNumber))
                 {
+                    // Add possible changes
                     nextMergedAccount.AccountNumber = deletedAccount.AccountNumber;
                     correctedAccounts.add(nextMergedAccount);
                 }

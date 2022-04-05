@@ -40,7 +40,6 @@ public class AccountMergeHandlerTest
         System.assertEquals(1, remainingAccount.size());
         System.assertEquals('001',remainingAccount.get(0).AccountNumber);
 
-
         List<Account> deletedAccounts = [SELECT Name, MasterRecordId, AccountNumber FROM Account WHERE MasterRecordId = :remainingAccount.get(0).Id AND IsDeleted = true ALL ROWS];
 
         System.assertEquals(2, deletedAccounts.size());
