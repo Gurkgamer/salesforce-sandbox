@@ -11,11 +11,22 @@
 public with sharing class AccountHandler
 {
 
-    public static void bulkBefore(List<Account> newList, Map<Id,Account> oldMap){}
+    private static Map<Account,List<Account>> mergedAccountsWithDeletedMergedAccounts;
+
+    public static void bulkBefore(List<Account> newList, Map<Id,Account> oldMap)
+    {
+        if(Trigger.operationType == System.TriggerOperation.BEFORE_UPDATE)
+        {
+            mergedAccountsWithDeletedMergedAccounts = AccountMergeHandler.getMergedAccountRecords((Map<Id,Account>) Trigger.newMap);
+        }
+    }
 
     public static void beforeInsert(List<Account> newList){}
 
-    public static void beforeUpdate(List<Account> newList, Map<Id,Account> oldMap){}
+    public static void beforeUpdate(List<Account> newList, Map<Id,Account> oldMap)
+    {
+        List<Account> accountToExternal = AccountMergeHandler.checkImportantFields(mergedAccountsWithDeletedMergedAccounts);
+    }
 
     public static void beforeDelete(Map<Id,Account> oldMap){}
 
