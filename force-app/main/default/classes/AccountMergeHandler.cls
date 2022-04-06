@@ -2,7 +2,7 @@
  * @description       :
  * @author            : jgallaga
  * @group             :
- * @last modified on  : 05/04/2022
+ * @last modified on  : 06/04/2022
  * @last modified by  : jgallaga
  * Modifications Log
  * Ver   Date         Author     Modification
@@ -28,6 +28,7 @@ public with sharing class AccountMergeHandler
 
         Set<Id> receivedAccountIds = updatedRecordsByMerge.keySet();
 
+        // Retrieves past merges that still remain at the recicle bin, must use extra filter is needed like LastModifiedDate
         Map<Id,Account> deletedMergedAccounts = new Map<Id,Account>([SELECT Name, MasterRecordId, AccountNumber FROM Account WHERE MasterRecordId IN :receivedAccountIds AND IsDeleted = true ALL ROWS]);
 
         for(Account nextDeletedMergedAccount : deletedMergedAccounts.values())
@@ -50,7 +51,7 @@ public with sharing class AccountMergeHandler
 
     /**
     * @description      For each Deleted Account from the Merged Account the values of the field of interested are compared to default to the wanted values
-    *                   Resturns a list of modified Accounts 
+    *                   Resturns a list of modified Accounts
     * @author           jgallaga | 05/04/2022
     * @param            Map<Account,List<Account>> mergedAccounts
     * @return           List<Account>

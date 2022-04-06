@@ -2,7 +2,7 @@
  * @description       :
  * @author            : jgallaga
  * @group             :
- * @last modified on  : 05/04/2022
+ * @last modified on  : 06/04/2022
  * @last modified by  : jgallaga
  * Modifications Log
  * Ver   Date         Author     Modification
@@ -44,7 +44,7 @@ trigger AccountTrigger on Account (before insert, before update, before delete, 
         }
         when else
         {
-            // Should not get here
+            // Should not get here (undelete?)
             System.debug('Tipo de operacion desconocido: ' + Trigger.operationType);
         }
     }
