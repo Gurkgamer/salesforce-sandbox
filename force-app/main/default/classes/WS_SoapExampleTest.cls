@@ -36,9 +36,6 @@ public with sharing class WS_SoapExampleTest {
         System.assert(insertedContacts.size() == 1);
         System.assertEquals('Test', insertedContacts.get(0).LastName);
         System.assertEquals('Name', insertedContacts.get(0).FirstName);
-        System.assertEquals('testemail@test.com', insertedContacts.get(0).Email);
-        
-
-    
+        System.assertEquals('testemail@test.com', insertedContacts.get(0).Email);        
     }
 }

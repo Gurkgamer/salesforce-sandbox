@@ -32,6 +32,12 @@ global with sharing class WS_SoapExample
 
         public void insertRecords()
         {
+            insertAccounts();
+            insertContacts();
+        }
+
+        private void insertAccounts()
+        {
             List<Account> newAccounts = new List<Account>();
 
             Database.DMLOptions dml = new Database.DMLOptions(); 
@@ -43,8 +49,14 @@ global with sharing class WS_SoapExample
             }
 
             Database.SaveResult[] accountCreationResults = Database.insert(newAccounts, dml);
+        }
 
+        private void insertContacts()
+        {
             List<Contact> newContacts = new List<Contact>();
+
+            Database.DMLOptions dml = new Database.DMLOptions(); 
+            dml.DuplicateRuleHeader.allowSave = true;
 
             for(Customer nextCustomer : receivedRecords)
             {
