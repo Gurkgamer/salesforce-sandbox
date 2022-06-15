@@ -2,17 +2,17 @@
  * @description       : Query Maker allows to create your own Query by adding the fields and conditions
  * @author            : jgallaga
  * @group             : 
- * @last modified on  : 06-14-2022
+ * @last modified on  : 06-15-2022
  * @last modified by  : jgallaga
  * 
  * Anonymous Usage Example:
     QueryMaker accountQueryMaker = new QueryMaker(Account.getSObjectType());
-    accountQueryMaker.addField(Account.Name.getDescribe().getSObjectField());
-    accountQueryMaker.addField(Account.Phone.getDescribe().getSObjectField());
-    String multiCondition1 = accountQueryMaker.createCondition(QueryMaker.ConditionOption.STARTSWITH,Account.Name.getDescribe().getSObjectField(),'R');
-    String multiCondition2 = accountQueryMaker.createCondition(QueryMaker.ConditionOption.ENDSWITH,Account.Name.getDescribe().getSObjectField(),'A');
-    String singleCondition = accountQueryMaker.createCondition(QueryMaker.ConditionOption.CONTAINS,Account.Name.getDescribe().getSObjectField(),'B');
-    List<String> myCOnditions = new List<String>();
+    accountQueryMaker.addField(Account.Name);
+    accountQueryMaker.addField(Account.Phone);
+    QueryMaker.QueryCondition multiCondition1 = accountQueryMaker.createCondition(QueryMaker.ConditionOption.STARTSWITH,Account.Name,'R');
+    QueryMaker.QueryCondition multiCondition2 = accountQueryMaker.createCondition(QueryMaker.ConditionOption.ENDSWITH,Account.Name,'A');
+    QueryMaker.QueryCondition singleCondition = accountQueryMaker.createCondition(QueryMaker.ConditionOption.CONTAINS,Account.Name,'B');
+    List<QueryMaker.QueryCondition> myCOnditions = new List<QueryMaker.QueryCondition>();
     myConditions.add(multiCondition1);
     myConditions.add(multiCondition2);
     accountQueryMaker.addCombinedConditions(myConditions,QueryMaker.ConditionConnector.ORCONDITION);
@@ -84,7 +84,7 @@ public without sharing class QueryMaker
 
     // TODO - Hacer uno por cada tipo de valor, pues sus opciones de condicion varian segun tipo
     // Crea la condicion para agregar despues en addCondition. Usar varias veces por si se quiere generar una condicion combinada y añadirlas de golpe con addCombinedConditions
-    public String createCondition(ConditionOption option, Schema.SObjectField field, String value)
+    public QueryCondition createCondition(ConditionOption option, Schema.SObjectField field, String value)
     {
         if(option == null)
         {
@@ -101,20 +101,44 @@ public without sharing class QueryMaker
             throw new QueryMakerException('This is not a valid option for a single string value condition');
         }
 
-        return field.getDescribe().getName() + ' ' + QueryMakerUtil.conditionEquivalence(option) + ' ' + QueryMakerUtil.getStringValueCondition(option, value);
+        QueryCondition createdCondition = new QueryCondition(option, field, value);
+
+        return createdCondition;
     }
 
-    public void addCondition(String condition)
+    public void addCondition(QueryCondition condition)
     {
+        if(condition == null)
+        {
+            throw new QueryMakerException('Can not add an empty condition');
+        }
+
         Integer nextIndex = queryConditions.size() + 1;
 
-        queryConditions.put(nextIndex,condition);
+        queryConditions.put(nextIndex,condition.getCondition());
     }
 
-    public void addCombinedConditions(List<String> conditions, ConditionConnector connector)
+    public void addCombinedConditions(List<QueryCondition> conditions, ConditionConnector connector)
     {
+        if(conditions == null || conditions.isEmpty())
+        {
+            throw new QueryMakerException('Can not add an empty collection of conditions');
+        }
+
+        if(connector == null)
+        {
+            throw new QueryMakerException('Can not add an empty collection of conditions');
+        }
+
+        List<String> stringyfiedConditions = new List<String>();
+
+        for(QueryCondition nextCondition: conditions)
+        {
+            stringyfiedConditions.add(nextCondition.getCondition());
+        }
+
         Integer nextIndex           = queryConditions.size() + 1;
-        String combinedCondition    = ' ( ' +  String.join(conditions, QueryMakerUtil.getConditionConnectorValue(connector)) + ' ) ';
+        String combinedCondition    = ' ( ' +  String.join(stringyfiedConditions, QueryMakerUtil.getConditionConnectorValue(connector)) + ' ) ';
 
         queryConditions.put(nextIndex, combinedCondition);
     }
@@ -132,7 +156,7 @@ public without sharing class QueryMaker
         System.debug('### ' + query);
 
         return Database.query(query);
-    }
+    }    
 
     private String getSelect()
     {
@@ -162,4 +186,19 @@ public without sharing class QueryMaker
     }
     
     public class QueryMakerException extends Exception{}
+
+    public class QueryCondition
+    {
+        private String conditionString;
+
+        public QueryCondition(ConditionOption option, Schema.SObjectField field, String value)
+        {
+            conditionString = field.getDescribe().getName() + ' ' + QueryMakerUtil.conditionEquivalence(option) + ' ' + QueryMakerUtil.getStringValueCondition(option, value);
+        }
+
+        public String getCondition()
+        {
+            return conditionString;
+        }
+    }
 }
