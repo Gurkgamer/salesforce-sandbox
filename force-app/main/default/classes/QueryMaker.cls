@@ -12,12 +12,13 @@
     QueryMaker.QueryCondition multiCondition1 = accountQueryMaker.createCondition(QueryMaker.ConditionOption.STARTSWITH,Account.Name,'R');
     QueryMaker.QueryCondition multiCondition2 = accountQueryMaker.createCondition(QueryMaker.ConditionOption.ENDSWITH,Account.Name,'A');
     QueryMaker.QueryCondition singleCondition = accountQueryMaker.createCondition(QueryMaker.ConditionOption.CONTAINS,Account.Name,'B');
-    List<QueryMaker.QueryCondition> myCOnditions = new List<QueryMaker.QueryCondition>();
+    List<QueryMaker.QueryCondition> myConditions = new List<QueryMaker.QueryCondition>();
     myConditions.add(multiCondition1);
     myConditions.add(multiCondition2);
     accountQueryMaker.addCombinedConditions(myConditions,QueryMaker.ConditionConnector.ORCONDITION);
     accountQueryMaker.addCondition(singleCondition);
     List<Account> results = (List<Account>)accountQueryMaker.execute(QueryMaker.ConditionConnector.ANDCONDITION);
+    // Obtained Query: [SELECT Name, Phone FROM Account WHERE  ( Name LIKE  'R%' OR Name LIKE  '%A' )   AND  Name LIKE  '%B%']
     System.debug(results);
 **/
 public without sharing class QueryMaker
