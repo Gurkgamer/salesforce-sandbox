@@ -5,7 +5,7 @@
  * @last modified on  : 06-17-2022
  * @last modified by  : jgallaga
 **/
-public with sharing class Integrator 
+public with sharing class Integrator
 {
     ICallOutBehaviour callout;
     //IResponeLogBehaviour logBehaviour;
@@ -24,4 +24,9 @@ public with sharing class Integrator
     {
         return callout.callOut();
     }
+
+    // public void logResponse()
+    // {
+    //     logBehaviour.log();
+    // }
 }
