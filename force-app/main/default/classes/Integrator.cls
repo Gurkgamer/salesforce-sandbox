@@ -8,6 +8,7 @@
 public with sharing class Integrator 
 {
     ICallOutBehaviour callout;
+    //IResponeLogBehaviour logBehaviour;
 
     public Integrator(ICallOutBehaviour callOutB) 
     {
