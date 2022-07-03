@@ -2,7 +2,7 @@
  * @description       :
  * @author            : jgallaga
  * @group             :
- * @last modified on  : 07-03-2022
+ * @last modified on  : 07-04-2022
  * @last modified by  : jgallaga
  * Modifications Log
  * Ver   Date         Author     Modification
@@ -56,10 +56,16 @@ public with sharing class AccountHandler implements ITriggerHandler
     public void bulkAfterDelete(List<SObject> oldList){}
 
     public void beforeDelete(LIst<SObject> oldMap){}
-    
+
     public void afterDelete(List<SObject> oldMap){}
 
     //#endregion
 
-    public void doDML(){}
+    //#region DMLs
+
+    public void finalDMLBefore(){}
+
+    public void finalDMLAfter(){}
+
+    //#endregion
 }

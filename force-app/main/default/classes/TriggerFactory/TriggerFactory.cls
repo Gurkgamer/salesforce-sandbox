@@ -1,11 +1,11 @@
 /**
- * @description       : 
+ * @description       :
  * @author            : jgallaga
- * @group             : 
- * @last modified on  : 07-03-2022
+ * @group             :
+ * @last modified on  : 07-04-2022
  * @last modified by  : jgallaga
 **/
-public with sharing class TriggerFactory 
+public with sharing class TriggerFactory
 {
     public static void manageTrigger(ITriggerHandler handlerClass)
     {
@@ -14,12 +14,7 @@ public with sharing class TriggerFactory
             throw new TriggerFactoryException('Can not manage a null class handler');
         }
 
-        String className = String.valueOf(handlerClass).split(':').get(0);
-
-        if(isHandlerEnabled(className))
-        {
-            execute(handlerClass);
-        }
+        execute(handlerClass);
     }
 
     private static void execute(ITriggerHandler handler)
@@ -57,21 +52,15 @@ public with sharing class TriggerFactory
                 handler.afterDelete(Trigger.old);
             }
         }
-        
-        handler.doDML();
-    }
 
-    private static boolean isHandlerEnabled(String className)
-    {
-        TriggerSetup__mdt handlerConfig = TriggerSetup__mdt.getInstance(className);
-
-        if(handlerConfig == null)
+        if(Trigger.isBefore)
         {
-            throw new TriggerFactoryException('There is no configuration for this handler ' + className);
+            handler.finalDMLBefore();
         }
-        
-        return handlerConfig.Enabled__c;
-     
+        else
+        {
+            handler.finalDMLAfter();
+        }
     }
 
     public class TriggerFactoryException extends Exception{}

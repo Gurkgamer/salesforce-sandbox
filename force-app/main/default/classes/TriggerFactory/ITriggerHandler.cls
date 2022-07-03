@@ -1,11 +1,11 @@
 /**
  * @description       : Every Handler class to be managed by the trigger factory need to implement this interface
  * @author            : jgallaga
- * @group             : 
- * @last modified on  : 07-03-2022
+ * @group             :
+ * @last modified on  : 07-04-2022
  * @last modified by  : jgallaga
 **/
-public interface ITriggerHandler 
+public interface ITriggerHandler
 {
     void bulkBeforeInsert(List<SObject> newList);
 
@@ -31,5 +31,7 @@ public interface ITriggerHandler
 
     void afterDelete(List<SObject> oldList);
 
-    void doDML();
+    void finalDMLBefore();
+
+    void finalDMLAfter();
 }
