@@ -1,11 +1,11 @@
 /**
- * @description       : 
+ * @description       :
  * @author            : jgallaga
- * @group             : 
- * @last modified on  : 07-03-2022
+ * @group             :
+ * @last modified on  : 07-05-2022
  * @last modified by  : jgallaga
 **/
-public with sharing class TriggerFactory 
+public with sharing class TriggerFactory
 {
     public static void manageTrigger(ITriggerHandler handlerClass)
     {
@@ -28,37 +28,38 @@ public with sharing class TriggerFactory
         {
             when BEFORE_INSERT
             {
-                handler.bulkBeforeInsert(Trigger.new);
                 handler.beforeInsert(Trigger.new);
             }
             when BEFORE_UPDATE
             {
-                handler.bulkBeforeUpdate(Trigger.new, Trigger.oldMap);
                 handler.beforeUpdate(Trigger.new, Trigger.oldMap);
             }
             when BEFORE_DELETE
             {
-                handler.bulkBeforeDelete(Trigger.old);
                 handler.beforeDelete(Trigger.old);
             }
             when AFTER_INSERT
             {
-                handler.bulkAfterInsert(Trigger.new);
                 handler.afterInsert(Trigger.new);
             }
             when AFTER_UPDATE
             {
-                handler.bulkAfterUpdate(Trigger.new, Trigger.oldMap);
                 handler.afterUpdate(Trigger.new,Trigger.oldMap);
             }
             when AFTER_DELETE
             {
-                handler.bulkAfterDelete(Trigger.old);
                 handler.afterDelete(Trigger.old);
             }
         }
-        
-        handler.doDML();
+
+        if(Trigger.isBefore)
+        {
+            handler.finalDMLBefore();
+        }
+        else
+        {
+            handler.finalDMLAfter();
+        }
     }
 
     private static boolean isHandlerEnabled(String className)
@@ -69,9 +70,9 @@ public with sharing class TriggerFactory
         {
             throw new TriggerFactoryException('There is no configuration for this handler ' + className);
         }
-        
+
         return handlerConfig.Enabled__c;
-     
+
     }
 
     public class TriggerFactoryException extends Exception{}

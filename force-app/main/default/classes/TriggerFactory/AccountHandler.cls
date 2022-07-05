@@ -2,7 +2,7 @@
  * @description       :
  * @author            : jgallaga
  * @group             :
- * @last modified on  : 07-03-2022
+ * @last modified on  : 07-05-2022
  * @last modified by  : jgallaga
  * Modifications Log
  * Ver   Date         Author     Modification
@@ -10,56 +10,23 @@
 **/
 public with sharing class AccountHandler implements ITriggerHandler
 {
-    // For Before Update
-    private static Map<Account,List<Account>> mergedAccountsWithDeletedMergedAccounts;
-
-    //#region Insert
-
-    public void bulkBeforeInsert(List<Account> newList)
-    {
-        System.debug('Esto es en before');
-    }
-
-    public void bulkAfterInsert(List<Account> newList)
-    {
-        System.debug('Esto es en after');
-    }
-
     public void beforeInsert(List<SObject> newList){}
-
-    public void afterInsert(List<SObject> newList){}
-
-    //#endregion
-
-    //#region Update
-
-    public void bulkBeforeUpdate(List<SObject> newList , Map<Id,SObject> oldMap)
-    {
-        mergedAccountsWithDeletedMergedAccounts = AccountMergeHandler.getMergedAccountRecords((Map<Id,Account>) Trigger.newMap);
-    }
 
     public void beforeUpdate(List<SObject> newList, Map<Id,SObject> oldMap)
     {
+        Map<Account,List<Account>> mergedAccountsWithDeletedMergedAccounts = AccountMergeHandler.getMergedAccountRecords((Map<Id,Account>) Trigger.newMap);
         List<Account> accountToExternal = AccountMergeHandler.checkImportantFields(mergedAccountsWithDeletedMergedAccounts);
     }
 
-    public void bulkAfterUpdate(List<SObject> newList , Map<Id,SObject> oldMap){}
+    public void beforeDelete(LIst<SObject> oldMap){}
+
+    public void afterInsert(List<SObject> newList){}
 
     public void afterUpdate(List<SObject> newList, Map<Id,SObject> oldMap){}
 
-    //#endregion
-
-    //#region Delete
-
-    public void bulkBeforeDelete(List<SObject> oldList){}
-
-    public void bulkAfterDelete(List<SObject> oldList){}
-
-    public void beforeDelete(LIst<SObject> oldMap){}
-    
     public void afterDelete(List<SObject> oldMap){}
 
-    //#endregion
+    public void finalDMLBefore(){}
 
-    public void doDML(){}
+    public void finalDMLAfter(){}
 }
