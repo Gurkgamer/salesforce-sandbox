@@ -1,0 +1,24 @@
+<!--
+  @description       :
+  @author            : Gurkgamer
+  @group             :
+  @last modified on  : 10-11-2022
+  @last modified by  : Gurkgamer
+-->
+<template>
+    <lightning-input type="file" label="Archivo para subir" accept=".zip" onchange={loadZip}></lightning-input>
+
+    <template if:true={nombreArchivo}>
+        El nombre del archivo añadido es: {nombreArchivo}
+    </template>
+    <template if:false={nombreArchivo}>
+        No se ha adjuntado ningún archivo.
+    </template>
+<lightning-button label="Cargar" title="Subir" onclick={processZip}>
+
+</lightning-button>
+
+Mensaje desde Apex: {mensajeDesdeApex}
+Errores: {errorMensaje}
+
+</template>
