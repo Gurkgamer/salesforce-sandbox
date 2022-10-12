@@ -6,7 +6,10 @@ import unzipControllerApex from '@salesforce/apex/ZipFileUnpack.unpackZipAndUplo
 export default class UploadFileZipToSobjects extends LightningElement
 {
     @api
-    myRecordId;
+    ObjectName;
+    @api
+    SearchField;
+
     nombreArchivo;
     archivo;
     mensajeDesdeApex;
@@ -48,7 +51,14 @@ export default class UploadFileZipToSobjects extends LightningElement
     {
         const base64 = this.fileData.base64;
         console.log('->' + base64);
-        unzipControllerApex({zipFileData : base64}).then(result=>
+        const apexWrapper =
+        {
+            zipRawData : base64,
+            objectName : this.ObjectName,
+            fieldName : this.SearchField
+        }
+
+        unzipControllerApex({zipfileData : apexWrapper}).then(result=>
             {
                 this.mensajeDesdeApex = result;
             })

@@ -2,45 +2,74 @@
  * @description       :
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 10-11-2022
+ * @last modified on  : 10-12-2022
  * @last modified by  : Gurkgamer
 **/
-public with sharing class ZipFileUnpack
+public without sharing class ZipFileUnpack
 {
-    //zipFileData es el base64 del archivo zip
+    //zipRawData es el base64 del archivo zip
     @AuraEnabled
-    public static String unpackZipAndUpload(String zipFileData)
+    public static String unpackZipAndUpload(ZipFileWrapper zipfileData)
     {
-        //Usamos el zippex para cargar el ZIP
-        Blob contenido = EncodingUtil.base64Decode(zipFileData);
+        String resultString = 'OK';
 
-        Zippex unzipper = new Zippex(contenido);
-        Map<String,Blob> fileData = new Map<String,Blob>();
-
-        for(String nextFileName : unzipper.getFileNames())
+        try
         {
-            Blob fileContent = unzipper.getFile(nextFileName);
-            fileData.put(nextFileName,fileContent);
+            // Get data ready for processing
+
+            Blob zipBlobData = EncodingUtil.base64Decode(zipfileData.zipRawData);
+            Zippex zipFile = new Zippex(zipBlobData);
+            Map<String,Blob> fileData = new Map<String,Blob>();
+
+            for(String nextFileName : zipFile.getFileNames())
+            {
+                Blob fileContent = zipFile.getFile(nextFileName);
+                fileData.put(nextFileName, fileContent);
+            }
+
+            String sObjectName  = zipfileData.objectName;
+            String sObjectFIeld = zipfileData.fieldName;
+
+            Schema.SObjectType schemaSObjectName    = String.isNotBlank(sObjectName)    ? Schema.getGlobalDescribe().get(sObjectName) : null;
+            Schema.SObjectField schemaSObjectField  = String.isNotBlank(sObjectField)   ? Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap().get(sObjectField) : null;
+
+            // Process to insert
+
+            insertFilesToSalesforce(fileData, schemaSObjectName, schemaSObjectField);
+        }
+        catch(Exception errorUnzip)
+        {
+            resultString = errorUnzip.getMessage() + ' => ' + errorUnzip.getStackTraceString();
+            System.debug(resultString);
+            throw errorUnzip;
         }
 
-        insertFilesToSalesforce(fileData);
-
-        return 'Al menos no he explotado';
+        return resultString;
     }
 
-    private static void insertFilesToSalesforce(Map<String,Blob> fileData)
+    // Each file will be attached to the record where name and filename match
+    private static void insertFilesToSalesforce(Map<String,Blob> fileData, Schema.SObjectType sObjectName, Schema.SObjectField sObjectField)
     {
-        //0º Buscar las cuentas
+        // The files are inserted as Content Version, it returns map of filename and its ContentDocumentId
+        Map<String,Id> contentDocumentIdByFileName = insertFiles(fileData);
+
+        // Obtain the records the files will be added to
         Set<String> accountNames = new Set<String>();
+
         for(String nextFileName : fileData.keySet())
         {
-            System.debug(nextFileName);
             accountNames.add(nextFileName.split('\\.').get(0));
         }
-        Map<String,Id> accounts = getRecordsForFiles(accountNames);
 
+        Map<String,Id> accountIdsByName = getRecordsForFiles(sObjectName, sObjectField, accountNames);
+
+        // Add the files to each record as an attachment
+        relatefilesToRecord(contentDocumentIdByFileName, accountIdsByName);
+    }
+
+    private static Map<String,Id> insertFiles(Map<String,Blob> fileData)
+    {
         List<ContentVersion> archivosAInsertar = new List<ContentVersion>();
-        //1º ContentVersion
 
         for(String file : fileData.keySet())
         {
@@ -60,7 +89,7 @@ public with sharing class ZipFileUnpack
         [
             SELECT  ContentDocumentId, FileExtension, Title
             FROM    ContentVersion
-            WHERE   id IN: archivosAInsertar
+            WHERE   Id IN: archivosAInsertar
         ];
 
         Map<String,Id> contentDocumentIdByFileName = new Map<String,Id>();
@@ -70,31 +99,60 @@ public with sharing class ZipFileUnpack
             contentDocumentIdByFileName.put(nextAI.Title + '.' + nextAI.FileExtension, nextAI.ContentDocumentId);
         }
 
-        //2º ContentDocumentLink
+        return contentDocumentIdByFileName;
+    }
+
+    private static void relatefilesToRecord(Map<String,Id> contentDocumentIdByFileName, Map<String,Id> accountIdsByName)
+    {
         List<ContentDocumentLink> enlaceArchivos = new List<ContentDocumentLink>();
 
         for(String nextFile : contentDocumentIdByFileName.keySet())
         {
-            enlaceArchivos.add(new ContentDocumentLink(
+            ContentDocumentLink nextFileLink = new ContentDocumentLink(
                 ContentDocumentId = contentDocumentIdByFileName.get(nextFile),
-                LinkedEntityId = accounts.get(nextFile.split('\\.').get(0)),
+                LinkedEntityId = accountIdsByName.get(nextFile.split('\\.').get(0)),
                 ShareType = 'I',
                 Visibility = 'AllUsers'
-            ));
+            );
+
+            enlaceArchivos.add(nextFileLink);
         }
 
         insert enlaceArchivos;
     }
 
-    private static Map<String,Id> getRecordsForFiles(Set<String> accountNames)
+    public static Map<String,Id> getRecordsForFiles(Schema.SObjectType sObjectSchema, Schema.SObjectField searchFieldSchema, Set<String> whereValues)
     {
-        Map<String,Id> accountNameMap = new Map<String,Id>();
+        Map<String,Id> resultRecords = new Map<String,Id>();
 
-        for(Account nextA :[SELECT Name FROM Account WHERE name IN :accountNames])
+        if(sObjectSchema == null || searchFieldSchema == null || whereValues == null)
         {
-            accountNameMap.put(nextA.Name, nextA.Id);
+            return resultRecords;
         }
 
-        return accountNameMap;
+        String sObjectName = sObjectSchema.getDescribe().getName();
+        String fieldName = searchFieldSchema.getDescribe().getName();
+
+        String queryString = 'SELECT ' + fieldName +' FROM ' + sObjectName + ' WHERE ' + fieldName + ' IN : whereValues';
+
+        for(SObject nextRecord : Database.query(queryString))
+        {
+            String fieldValue   = String.valueOf(nextRecord.get(fieldName));
+            String recordId     = String.valueOf(nextRecord.get('Id'));
+
+            resultRecords.put(fieldValue, recordId);
+        }
+
+        return resultRecords;
+    }
+
+    public with sharing class ZipFileWrapper
+    {
+        @AuraEnabled
+        public String zipRawData {get;set;}
+        @AuraEnabled
+        public String objectName {get;set;}
+        @AuraEnabled
+        public String fieldName {get;set;}
     }
 }

@@ -5,4 +5,10 @@
     <targets>
         <target>lightning__HomePage</target>
     </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__HomePage">
+            <property name="ObjectName" type="String" required="true" description="Place here the API name of the object where the file will be attached to."/>
+            <property name="SearchField" type="String" required="true" description="Plave here the field API name with which the component will search the records."/>
+        </targetConfig>
+    </targetConfigs>
 </LightningComponentBundle>
