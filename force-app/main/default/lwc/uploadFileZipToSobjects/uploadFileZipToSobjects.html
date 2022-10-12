@@ -6,19 +6,24 @@
   @last modified by  : Gurkgamer
 -->
 <template>
-    <lightning-input type="file" label="Archivo para subir" accept=".zip" onchange={loadZip}></lightning-input>
+    <lightning-card title="Subir Archivos" icon-name="standard:relationship" class="slds-card_boundary">
 
-    <template if:true={nombreArchivo}>
-        El nombre del archivo añadido es: {nombreArchivo}
-    </template>
-    <template if:false={nombreArchivo}>
-        No se ha adjuntado ningún archivo.
-    </template>
-<lightning-button label="Cargar" title="Subir" onclick={processZip}>
+        <div class="slds-card__body slds-card__body_inner">
 
-</lightning-button>
+        <lightning-input type="file" label="Archivo para subir" accept=".zip" onchange={loadZip}></lightning-input>
 
-<p>Mensaje desde Apex: {mensajeDesdeApex}</p>
-<p>Errores: {errorMensaje}</p>
+        <template if:true={nombreArchivo}>
+            El nombre del archivo añadido es: {nombreArchivo}
+        </template>
 
+        <template if:false={nombreArchivo}>
+            No se ha adjuntado ningún archivo.
+        </template>
+
+        <p><lightning-button label="Cargar" title="Subir" onclick={processZip}></lightning-button></p>
+
+        <p>Mensaje desde Apex: {mensajeDesdeApex}</p>
+        <p>Errores: {errorMensaje}</p>
+    </div>
+    </lightning-card>
 </template>
