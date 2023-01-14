@@ -69,11 +69,8 @@ public without sharing class SchemaUtil {
         String pControllingFieldName    = controllingField.getDescribe().getName();
         String pDependentFieldName      = dependentField.getDescribe().getName();
 
-
-        Utilities utilidades = new Utilities();
-
         //verify field names
-        if ( ! utilidades.isFieldFromSobject(pType, controllingField) || utilidades.isFieldFromSobject(pType, dependentField))
+        if ( ! Utilities.isFieldFromSobject(pType, controllingField) || ! Utilities.isFieldFromSobject(pType, dependentField))
         {
             return null;
         }
@@ -220,16 +217,17 @@ public without sharing class SchemaUtil {
             }
 
             //get the base64bytes
-            for(Integer i=0;i<pValidFor.length();i++)
+            for(Integer i=0; i < pValidFor.length(); i++)
             {
                 //get currenct character value
                 pBytes.Add((base64CharCodes.get((pValidFor.Substring(i, i+1)))));
             }
 
+
             //calculate the full decimal value
             for (Integer i = 0; i < pBytes.size(); i++)
             {
-                Integer pShiftAmount = (pBytes.size()-(i+1))*6;//used to shift by a factor 6 bits to get the value
+                Integer pShiftAmount = (pBytes.size() - ( i + 1 )) * 6; //used to shift by a factor 6 bits to get the value
                 pFullValue = pFullValue + (pBytes[i] << (pShiftAmount));
             }
 
@@ -247,7 +245,7 @@ public without sharing class SchemaUtil {
             	n = nList[i];
 
 	            //calculate the target bit for comparison
-	            bit = 7 - (Math.mod(n,8));
+	            bit = 7 - (Math.mod(n, 8));
 
 	            //calculate the octet that has in the target bit
 	            targetOctet = (bytesBeingUsed - 1) - (n >> bytesBeingUsed);
