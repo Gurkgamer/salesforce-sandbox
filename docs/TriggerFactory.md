@@ -12,9 +12,11 @@ Factory pattern for managing Salesforce triggers. It allows executing the trigge
 
 ### manageTrigger(handlerInstance)
 
+    Executes trigger functionality for a specified handler class implementing the ITriggerHandler interface.
+
 #### Signature
 
-    `public static void manageTrigger(ITriggerHandler handlerInstance)`
+    public static void manageTrigger(ITriggerHandler handlerInstance)`
 
 #### Parameters
 
