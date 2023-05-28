@@ -8,7 +8,7 @@ By using metadata, it is possible to configure the avoidance of executing the Ha
 
 ## Apex Class: ITriggerHandler
 
-This interface class will force the Handler classes to implement all the required methods to be able to execute each trigger operation avaible, except AFTER_UNDELETE. Check the limitations sections for more information.
+This interface class will force the Handler classes to implement all the required methods to be able to execute each trigger operation avaible, except AFTER_UNDELETE. Check the limitations section for more information.
 
 ## Apex Class: TriggerFactory Methods
 
