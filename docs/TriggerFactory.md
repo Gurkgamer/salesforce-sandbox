@@ -14,23 +14,23 @@ Factory pattern for managing Salesforce triggers. It allows executing the trigge
 
 #### Signature
 
-`public static void manageTrigger(ITriggerHandler handlerInstance)`
+    `public static void manageTrigger(ITriggerHandler handlerInstance)`
 
 #### Parameters
 
-*handlerInstance*
+    *handlerInstance*
 
-Type: ITriggerHandler
+    Type: ITriggerHandler
 
-The class on which the Trigger functionality should be executed.
+    The class on which the Trigger functionality should be executed.
 
 #### Return Value
 
-Type: void
+    Type: void
 
 Usage
 
-Call this method with a new instance of the class handler you want to execute in the Trigger's context.
+    Call this method with a new instance of the class handler you want to execute in the Trigger's context.
 
 ## Custom Metadata: TriggerSetup__mdt
 
