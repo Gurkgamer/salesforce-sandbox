@@ -2,8 +2,8 @@
  * @description       : Every Handler class to be managed by the trigger factory need to implement this interface
  * @author            : jgallaga
  * @group             :
- * @last modified on  : 07-05-2022
- * @last modified by  : jgallaga
+ * @last modified on  : 05-28-2023
+ * @last modified by  : Gurkgamer
 **/
 public interface ITriggerHandler
 {
@@ -18,8 +18,4 @@ public interface ITriggerHandler
     void afterUpdate(List<SObject> newList, Map<Id,SObject> oldMap);
 
     void afterDelete(List<SObject> oldList);
-
-    void finalDMLBefore();
-
-    void finalDMLAfter();
 }

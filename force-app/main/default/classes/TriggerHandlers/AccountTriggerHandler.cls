@@ -1,14 +1,14 @@
 /**
  * @description       :
- * @author            : jgallaga
+ * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 07-05-2022
- * @last modified by  : jgallaga
+ * @last modified on  : 05-28-2023
+ * @last modified by  : Gurkgamer
  * Modifications Log
  * Ver   Date         Author     Modification
- * 1.0   05/04/2022   jgallaga   Initial Version
+ * 1.0   05/04/2022   Gurkgamer   Initial Version
 **/
-public with sharing class AccountHandler implements ITriggerHandler
+public with sharing class AccountTriggerHandler implements ITriggerHandler
 {
     public void beforeInsert(List<SObject> newList){}
 
@@ -25,8 +25,4 @@ public with sharing class AccountHandler implements ITriggerHandler
     public void afterUpdate(List<SObject> newList, Map<Id,SObject> oldMap){}
 
     public void afterDelete(List<SObject> oldMap){}
-
-    public void finalDMLBefore(){}
-
-    public void finalDMLAfter(){}
 }
