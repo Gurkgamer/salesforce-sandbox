@@ -1,14 +1,14 @@
 /**
  * @description       :
- * @author            : jgallaga
+ * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 07-03-2022
- * @last modified by  : jgallaga
+ * @last modified on  : 05-29-2023
+ * @last modified by  : Gurkgamer
  * Modifications Log
  * Ver   Date         Author     Modification
- * 1.0   05/04/2022   jgallaga   Initial Version
+ * 1.0   05/04/2022   Gurkgamer   Initial Version
 **/
-trigger AccountTrigger on Account (before insert, before update, before delete, after insert, after update, after delete, after undelete)
+trigger AccountTrigger on Account (before insert, before update, before delete, after insert, after update, after delete)
 {
-    TriggerFactory.manageTrigger(new AccountHandler());
+    TriggerFactory.manageTrigger(new AccountTriggerHandler());
 }
