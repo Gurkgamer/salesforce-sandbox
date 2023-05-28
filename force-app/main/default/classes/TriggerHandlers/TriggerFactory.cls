@@ -16,7 +16,7 @@ public with sharing class TriggerFactory
      *
      * @param       handlerInstance
      *              The class on which the Trigger functionality should be executed. It must implement the ITriggerHandler interface.
-     * @throws      TriggerFactoryException
+     * @throws      IllegalArgumentException
      *              If a null parameter is received.
      */
     public static void manageTrigger(ITriggerHandler handlerInstance)
