@@ -6,6 +6,10 @@ Factory pattern for managing Salesforce triggers. It allows executing the trigge
 
 By using metadata, it is possible to configure the avoidance of executing the Handler class. Use this records to control the Trigger execution in a production enviroment where Triggers can't be disabled or if you need to modify, load or delete a number of records without the trigger logic.
 
+## Apex Class: ITriggerHandler
+
+This interface class will force the Handler classes to implement all the required methods to be able to execute each trigger operation avaible, except AFTER_UNDELETE. Check the limitations sections for more information.
+
 ## Apex Class: TriggerFactory Methods
 
 - [manageTrigger(handlerInstance)](#section-manageTrigger)
@@ -47,21 +51,26 @@ Each entry will have to state the name of the Handler Class. The Enabled field w
 
 Entry example for an AccountHandler class:
 
-| Label | DeveloperName | Enabled|
-|-------|---------------|--------|
+| Label | Trigger Setup Name | Enabled |
+|-|-|-|
 | Account Handler | AccountHandler | True |
 
-#
+# Limitations
+
+This trigger management module won't be able to execute the AFTER_UNDELETE trigger operation. As not every standard object is able to use it, the Interface won't require the imeplementation of this context. If you need to execute an AFTER_UNDELETE context, modify your trigger class and corresponding handler to be able to manage it.
+
+
+# Files
 
 This module is composed of the following files:
 
 **Apex Class**
 - TriggerFactory.cls
 - TriggerFactory.cls-meta.xml
-- ITriggerHandler.cls
-- ITriggerHandler.cls-meta.xml
 - TriggerFactoryTest.cls
 - TriggerFactoryTest.cls-meta.xml
+- ITriggerHandler.cls
+- ITriggerHandler.cls-meta.xml
 
 **Custom Object**
 - TriggerSetup__mdt
