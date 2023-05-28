@@ -20,11 +20,11 @@ This interface class will force the Handler classes to implement all the require
 
 Executes trigger functionality for a specified handler class implementing the ITriggerHandler interface.
 
-#### **Signature**
+**Signature**
 
 `public static void manageTrigger(ITriggerHandler handlerInstance)`
 
-#### **Parameters**
+**Parameters**
 
 *handlerInstance*
 
@@ -32,11 +32,11 @@ Type: ITriggerHandler
 
 The class on which the Trigger functionality should be executed.
 
-#### **Return Value**
+**Return Value**
 
 Type: void
 
-#### **Usage**
+**Usage**
 
 Call this method withing a Trigger with a new instance of the class handler you want to execute in the Trigger's context.
 
