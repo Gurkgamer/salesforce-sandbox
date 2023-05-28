@@ -4,6 +4,8 @@
 
 Factory pattern for managing Salesforce triggers. It allows executing the trigger context in an organized and clear manner, regardless of the originating entity. The trigger should call the public method, passing the instantiation of the Handler class that implements the ITriggerHandler interface, to ensure the execution of the corresponding operation based on the context.
 
+For example, if a new Account record is inserted, the Trigger Factory will execute the beforeInsert and afterInsert methods of the Handler class that implemented the ITriggerHandler interface.
+
 By using metadata, it is possible to configure the avoidance of executing the Handler class. Use this records to control the Trigger execution in a production enviroment where Triggers can't be disabled or if you need to modify, load or delete a number of records without the trigger logic.
 
 ## Apex Class: ITriggerHandler
@@ -49,11 +51,11 @@ Custom metadata type used to configure the activation status of the Handler clas
 
 Each entry will have to state the name of the Handler Class. The Enabled field will control if the handler class will be executed by the Trigger Factory. **The DeveloperName must be the class name.**
 
-Entry example for an AccountHandler class:
+Entry example for an AccountTriggerHandler class we created, the configuration would be:
 
 | Label | Trigger Setup Name | Enabled |
 |-|-|-|
-| Account Handler | AccountHandler | True |
+| Account Handler | AccountTriggerHandler | True |
 
 # Limitations
 
