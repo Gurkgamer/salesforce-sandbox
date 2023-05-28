@@ -49,7 +49,7 @@ Call this method withing a Trigger with a new instance of the class handler you 
 
 Custom metadata type used to configure the activation status of the Handler class. Use this records to control if you want to execute the code of a particular handler.
 
-Each entry will have to state the name of the Handler Class. The Enabled field will control if the handler class will be executed by the Trigger Factory. **The DeveloperName must be the class name.**
+Each entry will have to state the name of the Handler Class. The Enabled field will control if the handler class will be executed by the Trigger Factory. **The "Trigger Setup Name" field must have the class name.**
 
 Entry example for an AccountTriggerHandler class we created, the configuration would be:
 
