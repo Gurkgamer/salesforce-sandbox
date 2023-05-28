@@ -12,11 +12,11 @@ This interface class will force the Handler classes to implement all the require
 
 ## Apex Class: TriggerFactory Methods
 
-- [manageTrigger(handlerInstance)](#section-manageTrigger)
+- [manageTrigger(handlerInstance)](#manageTrigger-section)
 
     Executes trigger functionality for a specified handler class implementing the ITriggerHandler interface.
 
-### - **manageTrigger(handlerInstance)** <a name="section-manageTrigger"></a>
+### - **manageTrigger(handlerInstance)** <a name="manageTrigger-section"></a>
 
 Executes trigger functionality for a specified handler class implementing the ITriggerHandler interface.
 
