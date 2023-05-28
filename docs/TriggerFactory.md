@@ -59,6 +59,7 @@ Entry example for an AccountHandler class:
 
 This trigger management module won't be able to execute the AFTER_UNDELETE trigger operation. As not every standard object is able to use it, the Interface won't require the imeplementation of this context. If you need to execute an AFTER_UNDELETE context, modify your trigger class and corresponding handler to be able to manage it.
 
+Check this Salesforce documentation for more information: [Triggers and Recovered Records](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_triggers_recovered_records.htm)
 
 # Files
 
