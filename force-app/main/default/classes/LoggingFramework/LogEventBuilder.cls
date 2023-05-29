@@ -12,7 +12,7 @@
  *                          .submit();
  * @author            : jgallaga
  * @group             : Seidor
- * @last modified on  : 05-29-2023
+ * @last modified on  : 05-30-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class LogEventBuilder
@@ -176,6 +176,7 @@ public with sharing class LogEventBuilder
             return this;
         }
 
+        this.type                   = EventType.ERROR;
         this.exceptionMessage       = error.getDMLMessage(errorIndex);
         this.exceptionStackTrace    = error.getStackTraceString();
         this.exceptionCause         = String.valueOf(error.getCause());
