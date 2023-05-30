@@ -40,6 +40,7 @@ public with sharing class LogEventBuilderHelper
 
     /**
      * @description Prepares the accumulated log events for publishing and publishes them to the Event bus.
+     *              The list of record instances will be cleared.
      *
      * @return      List<Database.SaveResult>
      *              A list of Database.SaveResult objects indicating the success or failure of the publish operation.

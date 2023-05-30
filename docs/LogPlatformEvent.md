@@ -16,13 +16,13 @@ The helper class will keep each record created until they are published. Each ti
 
     Creates a new LogEventBuilder instance with the provided message and adds it to the list of events.
 
-- [appendLogEventBuilder(logEventBuilderInstance)](#appendLogEventBuilder(logEventBuilderInstance))
+- [addLogEventBuilder(logEventBuilderInstance)](#addLogEventBuilder(logEventBuilderInstance))
 
     This method adds the received LogEventBUilder instance to the list of built intances.
 
 - [publish()](#publish())
 
-    Prepares the accumulated log events for publishing and publishes them.
+    Prepares the accumulated log events for publishing and publishes them. The list of record instances will be cleared.
 
 - [resetLogEvents()](#resetLogEvents())
 
@@ -86,7 +86,7 @@ Prepares the accumulated log events for publishing and publishes them to the Eve
 
 Type: List<Database.SaveResult>
 
-A list with the publishing results of the log events records to the Event bus.
+A list with the publishing results of the log events records to the Event bus. The list of record instances will be cleared.
 
 #### **resetLogEvents()**
 ---
