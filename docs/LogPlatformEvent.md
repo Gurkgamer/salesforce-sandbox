@@ -54,7 +54,7 @@ Call this method to receive a new instance of LogEventBuilder.
 
     LogEventBuilderHelper.createLogEventBuilder('Log event message');
 
-#### **addLogEventBuilder(logEventBuilderInstance)** <a href="addLogEventBuilder(logEventBuilderInstance)"></a>
+#### **addLogEventBuilder(logEventBuilderInstance)** <a href="#addLogEventBuilder(logEventBuilderInstance)"></a>
 ---
 
 This method adds the received LogEventBUilder instance to the list of built intances.
@@ -76,7 +76,7 @@ Type: void
 #### **publish()**
 ---
 
-Prepares the accumulated log events for publishing and publishes them to the Event bus.
+Prepares the accumulated log events for publishing and publishes them to the Event bus. The list of record instances will be cleared.
 
 **Signature**
 
