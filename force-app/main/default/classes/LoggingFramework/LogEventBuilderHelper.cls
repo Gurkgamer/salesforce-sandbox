@@ -2,7 +2,7 @@
  * @description       : The LogEventBuilderHelper class provides a convenient way to manage instances of the LogEventBuilder class and publish batches of log events.
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 05-30-2023
+ * @last modified on  : 05-31-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class LogEventBuilderHelper
@@ -27,7 +27,19 @@ public with sharing class LogEventBuilderHelper
     }
 
     /**
-     * @description Prepares the accumulated log events for publishing and publishes them.
+     * @description This method adds the received LogEventBUilder instance to the list of built intances.
+     */
+    public static void addLogEventBuilder(LogEventBuilder logEventBuilderInstance)
+    {
+        if(logEventBuilderInstance != null)
+        {
+            builtLogEventBuilders.add(logEventBuilderInstance);
+        }
+    }
+
+
+    /**
+     * @description Prepares the accumulated log events for publishing and publishes them to the Event bus.
      *
      * @return      List<Database.SaveResult>
      *              A list of Database.SaveResult objects indicating the success or failure of the publish operation.
@@ -49,19 +61,9 @@ public with sharing class LogEventBuilderHelper
         return publishResults;
     }
 
-    /**
-     * @description This method adds the received LogEventBUilder instance to the list of built intances.
-     */
-    public static void appendLogEventBuilder(LogEventBuilder logEventBuilderInstance)
-    {
-        if(logEventBuilderInstance != null)
-        {
-            builtLogEventBuilders.add(logEventBuilderInstance);
-        }
-    }
 
     /**
-     * @description Allow to remove the LogEventBuilder instances that are present in the helper.
+     * @description Allows to remove the LogEventBuilder instances that are present in the helper without publishing.
      */
     public static void resetLogEvents()
     {

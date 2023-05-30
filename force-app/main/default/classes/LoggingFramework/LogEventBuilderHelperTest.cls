@@ -24,8 +24,8 @@ public with sharing class LogEventBuilderHelperTest
     static void testPublish()
     {
         // Add LogEventBuilders to the helper
-        LogEventBuilderHelper.appendLogEventBuilder(new LogEventBuilder('Event 1'));
-        LogEventBuilderHelper.appendLogEventBuilder(new LogEventBuilder('Event 2'));
+        LogEventBuilderHelper.addLogEventBuilder(new LogEventBuilder('Event 1'));
+        LogEventBuilderHelper.addLogEventBuilder(new LogEventBuilder('Event 2'));
 
         Test.startTest();
 
@@ -44,14 +44,14 @@ public with sharing class LogEventBuilderHelperTest
     }
 
     @IsTest
-    static void testAppendLogEventBuilder()
+    static void testAddLogEventBuilder()
     {
         // Test the appendLogEventBuilder method
         LogEventBuilder builder = new LogEventBuilder('Test Message');
 
         Test.startTest();
 
-        LogEventBuilderHelper.appendLogEventBuilder(builder);
+        LogEventBuilderHelper.addLogEventBuilder(builder);
 
         Test.stopTest();
 
@@ -66,7 +66,7 @@ public with sharing class LogEventBuilderHelperTest
 
         Test.startTest();
 
-        LogEventBuilderHelper.appendLogEventBuilder(builder);
+        LogEventBuilderHelper.addLogEventBuilder(builder);
         System.assert(!LogEventBuilderHelper.builtLogEventBuilders.isEmpty());
         LogEventBuilderHelper.resetLogEvents();
 
@@ -89,7 +89,7 @@ public with sharing class LogEventBuilderHelperTest
 
         // Append additional LogEventBuilder
         LogEventBuilder builder3 = new LogEventBuilder('Event 3');
-        LogEventBuilderHelper.appendLogEventBuilder(builder3);
+        LogEventBuilderHelper.addLogEventBuilder(builder3);
 
         Assert.areEqual(3, LogEventBuilderHelper.builtLogEventBuilders.size());
 

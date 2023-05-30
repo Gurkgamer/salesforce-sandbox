@@ -12,13 +12,21 @@ By using metadata, it is possible to configure the avoidance of executing the Ha
 
 This interface class will force the Handler classes to implement all the required methods to be able to execute each trigger operation avaible, except AFTER_UNDELETE. Check the limitations section for more information.
 
-## Apex Class: TriggerFactory Methods
+## Apex Class: TriggerFactory
+
+Class that implements the Factory pattern for managing Salesforce triggers. It allows executing the trigger context in an organized and clear manner, regardless of the originating entity. By using metadata, it is possible to configure the avoidance of executing the Handler class. The trigger should call the public method, passing the instantiation of the Handler class that implements the ITriggerHandler interface,
+
+#
+
+### Methods
 
 - [manageTrigger(handlerInstance)](#manageTrigger-section)
 
     Executes trigger functionality for a specified handler class implementing the ITriggerHandler interface.
 
-### - **manageTrigger(handlerInstance)** <a name="manageTrigger-section"></a>
+#
+
+#### - **manageTrigger(handlerInstance)** <a name="manageTrigger-section"></a>
 
 Executes trigger functionality for a specified handler class implementing the ITriggerHandler interface.
 
@@ -34,7 +42,7 @@ Type: ITriggerHandler
 
 The class on which the Trigger functionality should be executed.
 
-**Return Value**
+**Return value**
 
 Type: void
 
