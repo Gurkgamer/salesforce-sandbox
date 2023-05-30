@@ -54,7 +54,7 @@ Call this method to receive a new instance of LogEventBuilder.
 
     LogEventBuilderHelper.createLogEventBuilder('Log event message');
 
-#### **addLogEventBuilder(logEventBuilderInstance)**
+#### **addLogEventBuilder(logEventBuilderInstance)** <a href="addLogEventBuilder(logEventBuilderInstance)"></a>
 ---
 
 This method adds the received LogEventBUilder instance to the list of built intances.
