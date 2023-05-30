@@ -97,6 +97,12 @@ public with sharing class LogEventBuilder
      * ir construyendo el registro de evento que desee.
      */
 
+    public LogEventBuilder message(String message)
+    {
+        this.message = message;
+        return this;
+    }
+
     public LogEventBuilder recordId(Id recordId)
     {
         this.recordId = recordId;
