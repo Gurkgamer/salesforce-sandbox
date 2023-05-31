@@ -94,11 +94,11 @@ Check the Usage section to examine the different approaches it can be taken on.
 
     Constructor class. Instantiating a new builder will fill system related fields with default values.
 
--[build()]()
+- [build()]()
 
     Transforms a LogEventBuilder instance and returns a Log__e instance.
 
--[print()]()
+- [print()]()
 
     Prints into the Salesforce debug logs the contents of the instance.
 
