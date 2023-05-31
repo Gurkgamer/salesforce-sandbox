@@ -102,31 +102,31 @@ Check the Usage section to examine the different approaches it can be taken on.
 
     Prints into the Salesforce debug logs the contents of the instance.
 
-- [message(String message)]()
+- [message(message)]()
 
     Add a message to the log.
 
-- [recordId(Id recordId)]()
+- [recordId(recordId)]()
 
     Add a Salesforce Id to the log.
 
-- [externalId(String externalId)]()
+- [externalId(externalId)]()
 
     Use this method to add an External Id to the log.
 
-- [sourceClass(String sourceClass)]()
+- [sourceClass(sourceClass)]()
 
     Use this method to report from withing which class is the log being added.
 
-- [type(EventType type)]()
+- [type(type)]()
 
     With the EventType enumerator of LogEventBuilder, classify the log.
 
-- [userId(Id userId)]()
+- [userId(userId)]()
 
     Add a user Id to the log.
 
-- [exception(Exception error)]()
+- [exception(error)]()
 
     This method will save the exception data to the log.
 
