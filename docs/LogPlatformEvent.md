@@ -53,7 +53,7 @@ Call this method to receive a new instance of LogEventBuilder.
 #### **publish()**
 ---
 
-Prepares the accumulated log events for publishing and publishes them to the Event bus.
+Prepares the accumulated log events for publishing and publishes them to the Event bus. The list of record instances will be cleared.
 
 **Signature**
 
