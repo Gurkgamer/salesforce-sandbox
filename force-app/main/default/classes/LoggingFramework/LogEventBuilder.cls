@@ -150,7 +150,7 @@ public with sharing class LogEventBuilder
         return this;
     }
 
-    public LogEventBuilder type (EventType type)
+    public LogEventBuilder type(EventType type)
     {
         if(type == null)
         {
@@ -204,19 +204,19 @@ public with sharing class LogEventBuilder
      *              Posición donde esta la información sobre el problema de DML que se quiere informar. No puede
      *              ser mayor a los elementos del error de DML para evitar salirle del índice.
      */
-    public LogEventBuilder  dmlFieldsException(DmlException error, Integer errorIndex)
+    public LogEventBuilder  dmlFieldsException(DmlException dmlError, Integer dmlErrorIndex)
     {
-        if(error == null || errorIndex == null || error.getNumDml() < errorIndex || errorIndex < 0)
+        if(dmlError == null || dmlErrorIndex == null || dmlError.getNumDml() < dmlErrorIndex || dmlErrorIndex < 0)
         {
             return this;
         }
 
         this.type                   = EventType.ERROR;
-        this.exceptionMessage       = error.getDMLMessage(errorIndex);
-        this.exceptionStackTrace    = error.getStackTraceString();
-        this.exceptionCause         = String.valueOf(error.getCause());
-        this.exceptionType          = error.getDmlType(errorIndex).name();
-        this.dmlExceptionFields     = error.getDmlFields(errorIndex).toString();
+        this.exceptionMessage       = dmlError.getDMLMessage(dmlErrorIndex);
+        this.exceptionStackTrace    = dmlError.getStackTraceString();
+        this.exceptionCause         = String.valueOf(dmlError.getCause());
+        this.exceptionType          = dmlError.getDmlType(dmlErrorIndex).name();
+        this.dmlExceptionFields     = dmlError.getDmlFields(dmlErrorIndex).toString();
 
         return this;
     }

@@ -25,7 +25,7 @@ The helper class will keep each record created until they are published. Each ti
     Allows to remove the LogEventBuilder instances that are present in the helper.
 
 
-#### **createLogEventBuilder(message)**
+#### **> createLogEventBuilder(message)**
 ---
 
 Creates a new LogEventBuilder instance with the provided message and adds it to the list of events.
@@ -50,7 +50,7 @@ Call this method to receive a new instance of LogEventBuilder.
 
     LogEventBuilderHelper.createLogEventBuilder('Log event message');
 
-#### **publish()**
+#### **> publish()**
 ---
 
 Prepares the accumulated log events for publishing and publishes them to the Event bus. The list of record instances will be cleared.
@@ -65,7 +65,7 @@ Type: List<Database.SaveResult>
 
 A list with the publishing results of the log events records to the Event bus. The list of record instances will be cleared.
 
-#### **resetLogEvents()**
+#### **> resetLogEvents()**
 ---
 
 Allows to remove the LogEventBuilder instances that are present in the helper without publishing.
@@ -80,18 +80,141 @@ Type: void
 
 ## Apex Class : Log Event Builder
 
+This class implements the builder pattern. It allows developers to construct event logs according to their needs by calling specific methods in a chain. By using the builder pattern, developers can easily customize and create flexible event logs. The class also includes a print() method for debugging purposes.
+
+For example:
+
+`new LogEventBuilder().message('The value of Account name is: ' + record.Name).sourceClass('AccountHandler').type(LogEventBuilder.EventType.LOG).print()`
+
+Check the Usage section to examine the different approaches it can be taken on.
+
 ### Methods
 
-#### **temp**
+- [LogEventBuilder()]()
+
+    Constructor class. Instantiating a new builder will fill system related fields with default values.
+
+-[build()]()
+
+    Transforms a LogEventBuilder instance and returns a Log__e instance.
+
+-[print()]()
+
+    Prints into the Salesforce debug logs the contents of the instance.
+
+- [message(String message)]()
+
+    Add a message to the log.
+
+- [recordId(Id recordId)]()
+
+    Add a Salesforce Id to the log.
+
+- [externalId(String externalId)]()
+
+    Use this method to add an External Id to the log.
+
+- [sourceClass(String sourceClass)]()
+
+    Use this method to report from withing which class is the log being added.
+
+- [type(EventType type)]()
+
+    With the EventType enumerator of LogEventBuilder, classify the log.
+
+- [userId(Id userId)]()
+
+    Add a user Id to the log.
+
+- [exception(Exception error)]()
+
+    This method will save the exception data to the log.
+
+- [dmlFieldsException(dmlError, dmlErrorIndex)]()
+
+    This method can be used to log a DML entry of a DMLException with its details onto a log.
+
+#### **> LogEventBuilder()**
 ---
+
+Constructor class. Instantiating a new builder will fill system related fields with default values.
+The values are:
+
+- transactionId
+    Contains the current transaction ID
+- type
+    By default, a LogEventBuilder will have a "LOG" type
+- eventTime
+    When a instance is made, this field will hace the current DateTime
 
 **Signature**
 
-**Parameter**
+`public LogEventBuilder()`
 
 **Return value**
 
-**Usage**
+Type: LogEventBuilder
+
+#### **> build()**
+
+**Signature**
+
+`public Log__e build()`
+
+*Return Value**
+
+Type: Log__e
+
+This is the platform event entity. You can publish this record to the Event Bus.
+
+#### **> print()**
+
+Allows to print into the Salesforce Log files the content of the intance up to that point.
+The log lines will be precededd with a "@@@@@@@@" string.
+
+**Signature**
+
+`public LogEventBuilder print()`
+
+**Return Value**
+
+Type: LogEventBuilder
+
+#### **> message(message)**
+
+Add a message to the log.
+
+**Signature**
+
+`public LogEventBuilder message(String message)`
+
+**Parameters**
+
+*message*
+
+Type: String
+
+**Return Value**
+
+Type: LogEventBuilder**
+
+#### **> recordId(recordId)**
+
+Add a Salesforce Id to the log.
+
+**Signature**
+
+`public LogEventBuilder recordId(Id recordId)`
+
+**Parameters**
+
+*recordId*
+
+Type: Id
+
+**Return Value**
+
+Type: LogEventBuilder
 
 # Usage
 
