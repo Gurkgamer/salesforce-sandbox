@@ -18,25 +18,13 @@ public with sharing class LogEventBuilderHelper
      * @return      LogEventBuilder
      *              The newly created LogEventBuilder instance.
      */
-    public static LogEventBuilder createLogEventBuilder(String message)
+    public static LogEventBuilder createLogEventBuilder()
     {
-        LogEventBuilder newEventBuilderInstance = new LogEventBuilder(message);
+        LogEventBuilder newEventBuilderInstance = new LogEventBuilder();
         builtLogEventBuilders .add(newEventBuilderInstance);
 
         return newEventBuilderInstance;
     }
-
-    /**
-     * @description This method adds the received LogEventBUilder instance to the list of built intances.
-     */
-    public static void addLogEventBuilder(LogEventBuilder logEventBuilderInstance)
-    {
-        if(logEventBuilderInstance != null)
-        {
-            builtLogEventBuilders.add(logEventBuilderInstance);
-        }
-    }
-
 
     /**
      * @description Prepares the accumulated log events for publishing and publishes them to the Event bus.

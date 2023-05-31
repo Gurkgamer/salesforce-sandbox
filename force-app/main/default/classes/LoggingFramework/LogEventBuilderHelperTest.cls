@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 05-30-2023
+ * @last modified on  : 05-31-2023
  * @last modified by  : Gurkgamer
 **/
 @IsTest
@@ -13,7 +13,7 @@ public with sharing class LogEventBuilderHelperTest
     {
         Test.startTest();
 
-        LogEventBuilder builder = LogEventBuilderHelper.createLogEventBuilder('Test Message');
+        LogEventBuilder builder = LogEventBuilderHelper.createLogEventBuilder();
 
         Test.stopTest();
 
@@ -24,8 +24,8 @@ public with sharing class LogEventBuilderHelperTest
     static void testPublish()
     {
         // Add LogEventBuilders to the helper
-        LogEventBuilderHelper.addLogEventBuilder(new LogEventBuilder('Event 1'));
-        LogEventBuilderHelper.addLogEventBuilder(new LogEventBuilder('Event 2'));
+        LogEventBuilderHelper.createLogEventBuilder();
+        LogEventBuilderHelper.createLogEventBuilder();
 
         Test.startTest();
 
@@ -44,29 +44,13 @@ public with sharing class LogEventBuilderHelperTest
     }
 
     @IsTest
-    static void testAddLogEventBuilder()
-    {
-        // Test the appendLogEventBuilder method
-        LogEventBuilder builder = new LogEventBuilder('Test Message');
-
-        Test.startTest();
-
-        LogEventBuilderHelper.addLogEventBuilder(builder);
-
-        Test.stopTest();
-
-        Assert.isTrue(LogEventBuilderHelper.builtLogEventBuilders.contains(builder));
-    }
-
-    @IsTest
     static void testResetLogEvents()
     {
         // Test the resetLogEvents method
-        LogEventBuilder builder = new LogEventBuilder('Test Message');
 
         Test.startTest();
 
-        LogEventBuilderHelper.addLogEventBuilder(builder);
+        LogEventBuilderHelper.createLogEventBuilder();
         System.assert(!LogEventBuilderHelper.builtLogEventBuilders.isEmpty());
         LogEventBuilderHelper.resetLogEvents();
 
@@ -84,14 +68,8 @@ public with sharing class LogEventBuilderHelperTest
         Test.startTest();
 
         // Create LogEventBuilders
-        LogEventBuilder builder1 = LogEventBuilderHelper.createLogEventBuilder('Event 1');
-        LogEventBuilder builder2 = LogEventBuilderHelper.createLogEventBuilder('Event 2');
-
-        // Append additional LogEventBuilder
-        LogEventBuilder builder3 = new LogEventBuilder('Event 3');
-        LogEventBuilderHelper.addLogEventBuilder(builder3);
-
-        Assert.areEqual(3, LogEventBuilderHelper.builtLogEventBuilders.size());
+        LogEventBuilder builder1 = LogEventBuilderHelper.createLogEventBuilder();
+        LogEventBuilder builder2 = LogEventBuilderHelper.createLogEventBuilder();
 
         // Publish events
         List<Database.SaveResult> publishResults = LogEventBuilderHelper.publish();
@@ -99,7 +77,7 @@ public with sharing class LogEventBuilderHelperTest
         Test.stopTest();
 
         // Assertions
-        System.assertEquals(3, publishResults.size());
+        System.assertEquals(2, publishResults.size());
 
         for (Database.SaveResult result : publishResults)
         {

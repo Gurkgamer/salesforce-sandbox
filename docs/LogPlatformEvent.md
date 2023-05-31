@@ -16,10 +16,6 @@ The helper class will keep each record created until they are published. Each ti
 
     Creates a new LogEventBuilder instance with the provided message and adds it to the list of events.
 
-- [addLogEventBuilder(logEventBuilderInstance)](#addLogEventBuilder(logEventBuilderInstance))
-
-    This method adds the received LogEventBUilder instance to the list of built intances.
-
 - [publish()](#publish())
 
     Prepares the accumulated log events for publishing and publishes them. The list of record instances will be cleared.
@@ -53,25 +49,6 @@ Type: LogEventBuilder
 Call this method to receive a new instance of LogEventBuilder.
 
     LogEventBuilderHelper.createLogEventBuilder('Log event message');
-
-#### **addLogEventBuilder(logEventBuilderInstance)** <a href="addLogEventBuilder(logEventBuilderInstance)"></a>
----
-
-This method adds the received LogEventBUilder instance to the list of built intances.
-
-**Signature**
-
-`public static void addLogEventBuilder(LogEventBuilder logEventBuilderInstance)`
-
-**Parameters**
-
-logEventBuilderInstance
-
-Type: LogEventBuilder
-
-**Return value**
-
-Type: void
 
 #### **publish()**
 ---

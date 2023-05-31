@@ -12,7 +12,7 @@
  *                          .submit();
  * @author            : jgallaga
  * @group             : Seidor
- * @last modified on  : 05-30-2023
+ * @last modified on  : 05-31-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class LogEventBuilder
@@ -52,9 +52,8 @@ public with sharing class LogEventBuilder
      * @author      jgallaga
      * @date        09/05/2023
      */
-    public LogEventBuilder(String message)
+    public LogEventBuilder()
     {
-        this.message        = message;
         this.transactionId  = System.Request.getCurrent().getRequestId(); // Permite localizar todos los eventos ocurrido en la misma transacción
         this.type           = EventType.LOG;
         this.eventTime      = System.now();
@@ -88,6 +87,36 @@ public with sharing class LogEventBuilder
         logEvent.UserId__c              = userId;
 
         return logEvent;
+    }
+
+    public LogEventBuilder print()
+    {
+        System.debug('@@@@@@@@');
+        printParameter(message, 'message');
+        printParameter(type, 'type');
+        printParameter(sourceClass, 'sourceClass');
+        printParameter(userId, 'userId');
+        printParameter(recordId, 'recordId');
+        printParameter(externalId, 'externalId');
+        printParameter(eventTime, 'eventTime');
+        printParameter(exceptionMessage, 'exceptionMessage');
+        printParameter(exceptionStackTrace, 'exceptionStackTrace');
+        printParameter(exceptionType, 'exceptionType');
+        printParameter(exceptionCause, 'exceptionCause');
+        printParameter(dmlExceptionFields, 'dmlExceptionFields');
+        printParameter(transactionId, 'transactionId');
+
+        if(Test.isRunningTest())
+        {
+            message = 'Test print';
+        }
+
+        return this;
+    }
+
+    private void printParameter(Object parameter, String parameterName)
+    {
+        System.debug(parameterName + ': ' + parameter);
     }
 
     /**

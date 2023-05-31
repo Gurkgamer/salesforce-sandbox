@@ -1,26 +1,23 @@
 /**
- * @description       : Clase de Test para comprobar el funcionamiento de la clase LogEventBuilder
- * @author            : jgallaga
- * @group             : Seidor
- * @last modified on  : 05-30-2023
+ * @description       : Test class to verify the functionality of the LogEventBuilder class.
+ * @author            : Gurkgamer
+ * @group             :
+ * @last modified on  : 05-31-2023
  * @last modified by  : Gurkgamer
 **/
 @isTest
 public with sharing class LogEventBuilderTest
 {
     /**
-     * @description Este test comprueba que tras utilizar los distintos
-     *              métodos disponibles, el método submit permite publicar
-     *              el evento en el bus sin problemas.
-     *              No nos preocupa el contenido de los valores indicados.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description This test verifies that after using the different available methods,
+     *              the submit method allows the event to be published on the bus without any issues.
+     *              We are not concerned with the content of the indicated values.
      */
     @IsTest
     static void test_LogEventBuilder_Build_OK()
     {
         // Create a new LogEventBuilder instance
-        LogEventBuilder builder = new LogEventBuilder('TestMessage');
+        LogEventBuilder builder = new LogEventBuilder();
 
         builder.message('Test message')
             .recordId('7077a00004FVdIXAA1');
@@ -29,26 +26,25 @@ public with sharing class LogEventBuilderTest
             .type(LogEventBuilder.EventType.WARNING)
             .userId(UserInfo.getUserId());
 
-        // Create and submit the log event
+        // Create and build the log event
         Test.startTest();
         Log__e logEventInstance = builder.build();
         Test.stopTest();
 
         // Verify the log event was created successfully
-        Assert.areEqual('Test message', logEventInstance.Message__c, 'Algo ha provocado que el evento no se generase con el mensaje');
+        Assert.areEqual('Test message', logEventInstance.Message__c, 'The event was not generated with the expected message');
+        Assert.areEqual('7077a00004FVdIXAA1', logEventInstance.RecordId__c, 'The event was not generated with the expected record ID');
+        Assert.areEqual('TestClass', logEventInstance.SourceClass__c, 'The event was not generated with the expected source class');
+        Assert.areEqual(LogEventBuilder.EventType.WARNING.name(), logEventInstance.Type__c, 'The event was not generated with the expected type');
     }
 
     /**
-     * @description Este test comrpueba que los valores que se le pasan
-     *              a la intanciación de un evento se asignan a los
-     *              campos correspondientes correctamente.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description This test verifies that the values passed to the instantiation of an event are correctly assigned to the corresponding fields.
      */
     @isTest
     static void test_LogParameters_Values_OK()
     {
-        LogEventBuilder builder = new LogEventBuilder('TestMessage');
+        LogEventBuilder builder = new LogEventBuilder();
 
         String testText = 'TestMessage';
         String recordId = '7077a00004FVdIXAA1';
@@ -68,38 +64,35 @@ public with sharing class LogEventBuilderTest
 
         Test.stopTest();
 
-        Assert.areEqual(testText,builder.message        , 'El mensaje del evento es diferente al introducido');
-        Assert.areEqual(recordId,builder.recordId       , 'El Id del registro no es el introducido');
-        Assert.areEqual(userId,builder.userId           , 'El id del usuario no es el introducido');
-        Assert.areEqual(externalId,builder.externalId   , 'El id externo no es el introducido');
-        Assert.areEqual(sourceClass,builder.sourceClass , 'La clase origen no es el introducido');
-        Assert.areEqual(type,builder.type               , 'El tipo de evento no es el introducido');
+        Assert.areEqual(testText, builder.message, 'The event message is different from the input');
+        Assert.areEqual(recordId, builder.recordId, 'The record ID is different from the input');
+        Assert.areEqual(userId, builder.userId, 'The user ID is different from the input');
+        Assert.areEqual(externalId, builder.externalId, 'The external ID is different from the input');
+        Assert.areEqual(sourceClass, builder.sourceClass, 'The source class is different from the input');
+        Assert.areEqual(type, builder.type, 'The event type is different from the input');
     }
 
     /**
-     * @description Método que comprueba que con los parametros por defecto,
-     *              es decir, solo instanciando la clase sin hacer nada,
-     *              la publicación del evento sigue funcionando correctamente.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description Method that verifies that with the default parameters, that is, only instantiating the class without doing anything else,
+     *              the event publication continues to work correctly.
      */
     @isTest
     static void test_DefaultLogParameterValues_Build_OK()
     {
-        LogEventBuilder builder = new LogEventBuilder('TestMessage');
+        LogEventBuilder builder = new LogEventBuilder();
 
         Test.startTest();
         Log__e logEventInstance = builder.build();
         Test.stopTest();
 
-        Assert.isTrue(logEventInstance != null);
+        Assert.isTrue(logEventInstance != null, 'The log event instance should not be null');
 
-        String emptyValue = 'Este campo debería estar vacío o nulo';
+        String emptyValue = 'This field should be empty or null';
 
-        Assert.isTrue(String.isNotBlank(logEventInstance.TransactionId__c)      , 'El identificador de la transacción no se rellenó de forma automática');
-        Assert.areEqual(LogEventBuilder.EventType.LOG.name(), logEventInstance.Type__c , 'El tipo del evento no ha recibido el valor por defecto esperado');
-        Assert.isTrue(logEventInstance.EventTime__c != null                     , 'El momento del evento no puede estar vacío');
-        Assert.areEqual('TestMessage',logEventInstance.Message__c              , emptyValue);
+        Assert.isTrue(String.isNotBlank(logEventInstance.TransactionId__c)      , 'The transaction ID was not automatically populated');
+        Assert.areEqual(LogEventBuilder.EventType.LOG.name(), logEventInstance.Type__c , 'The event type did not receive the expected default value');
+        Assert.isTrue(logEventInstance.EventTime__c != null                     , 'The event time cannot be empty');
+        Assert.isTrue(String.isBlank(logEventInstance.Message__c)               , emptyValue);
         Assert.isTrue(String.isBlank(logEventInstance.ExternalId__c)            , emptyValue);
         Assert.isTrue(String.isBlank(logEventInstance.SourceClass__c)           , emptyValue);
         Assert.isTrue(String.isBlank(logEventInstance.ExceptionStackTrace__c)   , emptyValue);
@@ -111,11 +104,7 @@ public with sharing class LogEventBuilderTest
     }
 
     /**
-     * @description Este método de test comprueba que la información referente
-     *              a una excepción informa los campos del evento preparados
-     *              para almacenar dichos datos.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description This test method verifies that the information regarding an exception informs the fields of the event that are prepared to store such data.
      */
     @isTest
     static void test_ExceptionDataParameters_OK()
@@ -129,26 +118,23 @@ public with sharing class LogEventBuilderTest
         }
         Catch(Exception error)
         {
-            builder = new LogEventBuilder('TestMessage').exception(error);
+            builder = new LogEventBuilder().exception(error);
 
         }
         Test.stopTest();
 
-        String noDataMessage = 'La información de la excepción no se almacenó correctamente';
+        String noDataMessage = 'The exception information was not stored correctly';
 
         Assert.IsTrue(String.isNotBlank(builder.exceptionMessage)   , noDataMessage);
         Assert.IsTrue(String.isNotBlank(builder.exceptionStackTrace), noDataMessage);
         Assert.IsTrue(String.isNotBlank(builder.exceptionType)      , noDataMessage);
         //La causa en esta situación, estará a nulo
-        Assert.IsTrue(String.isBlank(builder.exceptionCause)        , 'Este campo no debería tener ningún dato');
+        Assert.IsTrue(String.isBlank(builder.exceptionCause)        , 'This field should not have any data');
     }
 
 
     /**
-     * @description Se comprueba que tras insertar una excepción y publicar
-     *              el evento, no ocurre ningún problema
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description This test verifies that after inserting an exception and publishing the event, no issues occur.
      */
     @isTest
     static void test_ExceptionData_Build_OK()
@@ -162,18 +148,15 @@ public with sharing class LogEventBuilderTest
         }
         Catch(Exception error)
         {
-            publishResult = new LogEventBuilder('TestMessage').exception(error).build();
+            publishResult = new LogEventBuilder().exception(error).build();
         }
         Test.stopTest();
 
-        Assert.IsTrue(publishResult != null   , 'La publicación del evento no debería haber dado error');
+        Assert.IsTrue(publishResult != null   , 'The event publication should not have resulted in an error');
     }
 
     /**
-     * @description Este test asegura que tras registrar todos los eventos
-     *              de error de DML, éstos han sido publicados correctamente.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description This test ensures that after registering all the DML error events, they have been published correctly.
      */
     @isTest
     static void test_DMLExceptionSubmit_OK()
@@ -192,31 +175,28 @@ public with sharing class LogEventBuilderTest
         }
         Catch(DmlException dmlError)
         {
-            dmlsFieldsEventBuilt.add(new LogEventBuilder('TestMessage').exception(dmlError).build());
+            dmlsFieldsEventBuilt.add(new LogEventBuilder().exception(dmlError).build());
 
             for(Integer i = 0; i < dmlError.getNumDml(); i++)
             {
-                dmlsFieldsEventBuilt.add(new LogEventBuilder('TestMessage').dmlFieldsException(dmlError, i).build());
+                dmlsFieldsEventBuilt.add(new LogEventBuilder().dmlFieldsException(dmlError, i).build());
             }
         }
         Test.stopTest();
 
         for(Log__e nextSubmit :dmlsFieldsEventBuilt)
         {
-            Assert.isTrue(String.isNotBlank(nextSubmit.ExceptionMessage__c), 'Algo ha provocado que el evento no pudiera publicarse');
+            Assert.isTrue(String.isNotBlank(nextSubmit.ExceptionMessage__c), 'Something caused the event to not be able to be published');
         }
     }
 
     /**
-     * @description Método que comprueba que la información sobre la excepción
-     *              de DML se rellena correctamente en los registros de evento.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description Method that verifies that the information about the DML exception is correctly filled in the event logs.
      */
     @isTest
     static void test_DMLExceptionData_OK()
     {
-        LogEventBuilder mainDMLException = new LogEventBuilder('TestMessage');
+        LogEventBuilder mainDMLException = new LogEventBuilder();
         List<LogEventBuilder> dmlMissingFieldExceptions = new List<LogEventBuilder>();
 
         Test.startTest();
@@ -231,27 +211,27 @@ public with sharing class LogEventBuilderTest
         }
         Catch(DmlException dmlError)
         {
-            mainDMLException = new LogEventBuilder('TestMessage').exception(dmlError);
+            mainDMLException = new LogEventBuilder().exception(dmlError);
 
             for(Integer i = 0; i < dmlError.getNumDml(); i++)
             {
-                dmlMissingFieldExceptions.add(new LogEventBuilder('TestMessage').dmlFieldsException(dmlError, i));
+                dmlMissingFieldExceptions.add(new LogEventBuilder().dmlFieldsException(dmlError, i));
             }
         }
         Test.stopTest();
 
-        String emptyValue = 'Este campo debería estar vacío o nulo';
+        String emptyValue = 'This field should be null';
 
         // Se miran que los campos del DML normal se hayan rellenado
-        Assert.isTrue(String.isNotBlank(mainDMLException.exceptionMessage)      , 'El mensaje de la excepción no debería estar vacío');
-        Assert.isTrue(String.isNotBlank(mainDMLException.exceptionStackTrace)   , 'El detalle de la excepción no debería estar vacío');
+        Assert.isTrue(String.isNotBlank(mainDMLException.exceptionMessage)      , 'The exception message should not be blank');
+        Assert.isTrue(String.isNotBlank(mainDMLException.exceptionStackTrace)   , 'The exception stack trace should not be blank');
         Assert.isTrue(String.isBlank(mainDMLException.exceptionCause)           , emptyValue); // La causa estará a nulo
-        Assert.isTrue(String.isNotBlank(mainDMLException.exceptionType)         , 'La información del tipo de excepción no debería estar vacío');
-        Assert.isTrue(String.isNotBlank(mainDMLException.transactionId)         , 'El id de la transacción debería haberse informado');
-        Assert.areEqual(LogEventBuilder.EventType.ERROR, mainDMLException.type  , 'El tipo del evento tiene que ser ERROR');
-        Assert.isTrue(mainDMLException.eventTime != null                        , 'El constructor debería haber informado este campo');
+        Assert.isTrue(String.isNotBlank(mainDMLException.exceptionType)         , 'The exception type information should not be blank');
+        Assert.isTrue(String.isNotBlank(mainDMLException.transactionId)         , 'The transaction id should have been provided');
+        Assert.areEqual(LogEventBuilder.EventType.ERROR, mainDMLException.type  , 'The event type must be ERROR');
+        Assert.isTrue(mainDMLException.eventTime != null                        , 'The event time should have been set');
 
-        Assert.isTrue(String.isNotBlank(mainDMLException.message)           , emptyValue);
+        Assert.isTrue(String.isBlank(mainDMLException.message)              , emptyValue);
         Assert.isTrue(String.isBlank(mainDMLException.externalId)           , emptyValue);
         Assert.isTrue(String.isBlank(mainDMLException.sourceClass)          , emptyValue);
         Assert.isTrue(String.isBlank(mainDMLException.userId)               , emptyValue);
@@ -259,16 +239,16 @@ public with sharing class LogEventBuilderTest
 
         for(LogEventBuilder nextDmlEvent :dmlMissingFieldExceptions)
         {
-            Assert.isTrue(String.isNotBlank(nextDmlEvent.exceptionMessage)  , 'El mensaje de la excepción DML no debería estar vacío');
-            Assert.isTrue(String.isNotBlank(nextDmlEvent.exceptionStackTrace), 'El detalle de la excepción DML no debería estar vacío');
+            Assert.isTrue(String.isNotBlank(nextDmlEvent.exceptionMessage)  , 'The DML exception message should not be blank');
+            Assert.isTrue(String.isNotBlank(nextDmlEvent.exceptionStackTrace), 'The DML exception stack trace should not be blank');
             Assert.isTrue(String.isBlank(nextDmlEvent.exceptionCause)       , emptyValue); // La causa estará a nulo
-            Assert.isTrue(String.isNotBlank(nextDmlEvent.exceptionType)     , 'El tipo de excepción DMl no debería estar vacío.');
-            Assert.isTrue(String.isNotBlank(nextDmlEvent.dmlExceptionFields), 'Los campos de la excepción DML deberían aparecer aquó');
-            Assert.isTrue(String.isNotBlank(nextDmlEvent.transactionId)     , 'El Id de la transacción se debería haber informado automáticamente');
-            Assert.areEqual(LogEventBuilder.EventType.ERROR,nextDmlEvent.type, 'El tipo de evento no puede estar nulo');
-            Assert.isTrue(nextDmlEvent.eventTime != null                    , 'El evento debería tener informado este campo');
+            Assert.isTrue(String.isNotBlank(nextDmlEvent.exceptionType)     , 'The DML exception type should not be blank');
+            Assert.isTrue(String.isNotBlank(nextDmlEvent.dmlExceptionFields), 'The DML exception fields should be present');
+            Assert.isTrue(String.isNotBlank(nextDmlEvent.transactionId)     , 'The transaction id should have been automatically provided');
+            Assert.areEqual(LogEventBuilder.EventType.ERROR,nextDmlEvent.type, 'The event type cannot be null');
+            Assert.isTrue(nextDmlEvent.eventTime != null                    , 'The event should have the event time field set');
 
-            Assert.areEqual('TestMessage',nextDmlEvent.message              , emptyValue);
+            Assert.isTrue(String.isBlank(nextDmlEvent.message)              , emptyValue);
             Assert.isTrue(String.isBlank(nextDmlEvent.externalId)           , emptyValue);
             Assert.isTrue(String.isBlank(nextDmlEvent.sourceClass)          , emptyValue);
             Assert.isTrue(String.isBlank(nextDmlEvent.userId)               , emptyValue);
@@ -277,15 +257,12 @@ public with sharing class LogEventBuilderTest
     }
 
     /**
-     * @description Método para asegurar que al la funcionalidad de guardar la información
-     *              concreta de un indice del DML no recibe valores incorrectos.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description Method to ensure that the functionality of saving specific information of a DML index does not receive incorrect values.
      */
     @IsTest
     static void test_DMLException_WrongIndex_OK()
     {
-        LogEventBuilder builder = new LogEventBuilder('TestMessage');
+        LogEventBuilder builder = new LogEventBuilder();
 
         Test.startTest();
         try
@@ -298,7 +275,7 @@ public with sharing class LogEventBuilderTest
         }
         Test.stopTest();
 
-        String emptyValue = 'Este campo debería estar vacío o nulo';
+        String emptyValue = 'This field should be null';
 
         Assert.isTrue(String.isBlank(builder.exceptionMessage)      , emptyValue);
         Assert.isTrue(String.isBlank(builder.exceptionStackTrace)   , emptyValue);
@@ -308,20 +285,19 @@ public with sharing class LogEventBuilderTest
     }
 
     /**
-     * @description Este test comprueba que si al método de excepción
-     *              se les da un valor nulo, no pasará nada. Los
-     *              campos no son sobreescritos ni da ningún error.
+     * @description This test verifies that if null values are passed to the exception method, nothing will happen.
+     *              The fields are not overwritten, and no error is thrown.
      */
     @IsTest
     static void test_NullValuesException_OK()
     {
-        LogEventBuilder builder = new LogEventBuilder('TestMessage');
+        LogEventBuilder builder = new LogEventBuilder();
 
         Test.startTest();
         builder.exception(null);
         Test.stopTest();
 
-        String emptyValue = 'Este campo debería estar vacío o nulo';
+        String emptyValue = 'This field should be null';
 
         Assert.isTrue(String.isBlank(builder.exceptionMessage)      , emptyValue);
         Assert.isTrue(String.isBlank(builder.exceptionStackTrace)   , emptyValue);
@@ -329,25 +305,26 @@ public with sharing class LogEventBuilderTest
         Assert.isTrue(String.isBlank(builder.exceptionType)         , emptyValue);
     }
 
-        /**
-     * @description Este test comprueba que si al método de excepción del DML
-     *              se le da valores nulos, no pasará nada. Los
-     *              campos no son sobreescritos ni da ningún error.
+    /**
+     * @description This test verifies that if null values are passed to the DML exception method, nothing will happen.
+     *              The fields are not overwritten, and no error is thrown.
      */
     @IsTest
     static void test_NullValuesDMLException_OK()
     {
-        LogEventBuilder builder1 = new LogEventBuilder('TestMessage');
-        LogEventBuilder builder2 = new LogEventBuilder('TestMessage');
-        LogEventBuilder builder3 = new LogEventBuilder('TestMessage');
+        LogEventBuilder builder1 = new LogEventBuilder();
+        LogEventBuilder builder2 = new LogEventBuilder();
+        LogEventBuilder builder3 = new LogEventBuilder();
+        LogEventBuilder builder4 = new LogEventBuilder();
 
         Test.startTest();
         builder1.dmlFieldsException(null,null);
         builder2.dmlFieldsException(new DmlException(),null);
         builder3.dmlFieldsException(null, 1);
+        builder4.dmlFieldsException(null, -1);
         Test.stopTest();
 
-        String emptyValue = 'Este campo debería estar vacío o nulo';
+        String emptyValue = 'This field should be null';
 
         Assert.isTrue(String.isBlank(builder1.exceptionMessage)     , emptyValue);
         Assert.isTrue(String.isBlank(builder1.exceptionStackTrace)  , emptyValue);
@@ -366,22 +343,44 @@ public with sharing class LogEventBuilderTest
         Assert.isTrue(String.isBlank(builder3.exceptionCause)       , emptyValue);
         Assert.isTrue(String.isBlank(builder3.exceptionType)        , emptyValue);
         Assert.isTrue(String.isBlank(builder3.dmlExceptionFields)   , emptyValue);
+
+        Assert.isTrue(String.isBlank(builder4.exceptionMessage)     , emptyValue);
+        Assert.isTrue(String.isBlank(builder4.exceptionStackTrace)  , emptyValue);
+        Assert.isTrue(String.isBlank(builder4.exceptionCause)       , emptyValue);
+        Assert.isTrue(String.isBlank(builder4.exceptionType)        , emptyValue);
+        Assert.isTrue(String.isBlank(builder4.dmlExceptionFields)   , emptyValue);
     }
 
     /**
-     * @description Test que asegura que no se puede poner el tipo del evento a nulo
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description Test that ensures the event type cannot be set to null.
      */
     @isTest
     static void test_NullType_OK()
     {
-        LogEventBuilder builder = new LogEventBuilder('TestMessage');
+        LogEventBuilder builder = new LogEventBuilder();
 
         Test.startTest();
         builder.type(null);
         Test.stopTest();
 
-        Assert.areEqual(LogEventBuilder.EventType.LOG, builder.type    , 'El tipo del evento no debería haberse cambiado');
+        Assert.areEqual(LogEventBuilder.EventType.LOG, builder.type    , 'The event type should not have been changed');
+    }
+
+    /**
+     * @description To see if the print method works, a test check will change the message.
+     */
+    @isTest
+    static void test_print_OK()
+    {
+        String testMessage = 'This is not the test message';
+        LogEventBuilder builder = new LogEventBuilder();
+        builder.message(testMessage);
+
+        Test.startTest();
+        builder.print();
+        Test.stopTest();
+
+        Assert.areNotEqual(testMessage, builder.message, 'The message should have changed when testing the debug print');
+        Assert.areEqual('Test print', builder.message, 'It is not the message it should have in this test');
     }
 }
