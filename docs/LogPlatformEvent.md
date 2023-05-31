@@ -156,8 +156,7 @@ The values are:
 Type: LogEventBuilder
 
 #### **> build()**
-
-#
+---
 
 **Signature**
 
@@ -170,8 +169,7 @@ Type: Log__e
 This is the platform event entity. You can publish this record to the Event Bus.
 
 #### **> print()**
-
-#
+---
 
 Allows to print into the Salesforce Log files the content of the intance up to that point.
 The log lines will be precededd with a "@@@@@@@@" string.
@@ -185,8 +183,7 @@ The log lines will be precededd with a "@@@@@@@@" string.
 Type: LogEventBuilder
 
 #### **> message(message)**
-
-#
+---
 
 Add a message to the log.
 
@@ -205,8 +202,7 @@ Type: String
 Type: LogEventBuilder**
 
 #### **> recordId(recordId)**
-
-#
+---
 
 Add a Salesforce Id to the log.
 
