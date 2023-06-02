@@ -387,7 +387,12 @@ Examples:
 
         EventBus.publish(errorEvents);
     }
-
+---
+    new LogEventBuilder()
+    .message('The value of Account name is: ' + record.Name)
+    .sourceClass('AccountHandler')
+    .type(LogEventBuilder.EventType.LOG)
+    .print();
 
 # Files
 
