@@ -220,7 +220,174 @@ Type: Id
 
 Type: LogEventBuilder
 
+#### **> externalId(externalId)**
+---
+
+Use this method to add an External Id to the log.
+
+**Signature**
+
+`public LogEventBuilder externalId(String externalId)`
+
+**Parameters**
+
+*externalId*
+
+Type: String
+
+**Return Value**
+
+LogEventBuilder
+
+#### **> sourceClass(sourceClass)**
+---
+
+Use this method to report from withing which class is the log being added.
+
+**Signature**
+
+`public LogEventBuilder sourceClass(String sourceClass)`
+
+**Parameters**
+
+*sourceClass**
+
+Type: String
+
+**Return Value**
+
+Type: LogEventBuilder
+
+#### **> type(type)**
+---
+
+With the EventType enumerator of LogEventBuilder, classify the log.
+
+**Signature**
+
+`public LogEventBuilder type(EventType type)`
+
+**Parameters**
+
+*type*
+
+Type: EventType
+
+Enum atrribute in the LogEventBuilder class.
+
+**Return Value**
+
+Type: LogEventBuilder
+
+**Usage**
+
+`LogEventBuilder event = new LogEventBuilder().type(LogEventBuilder.EventType.LOG);`
+
+#### **> userId(userId)**
+---
+
+Add a user Id to the log.
+
+**Signature**
+
+`public LogEventBuilder userId(Id userId)`
+
+**Parameter**
+
+*userId*
+
+Type: Id
+
+**Return Value**
+
+Type: LogEventBuilder
+
+#### **> exception(error)**
+
+This method will save any kind of exception data to the log.
+
+**Signature**
+
+`public LogEventBuilder exception(Exception exceptionError)`
+
+**Parameter**
+
+exceptionError
+
+Type: Exception
+
+This method will accept aky type of Exception. To log each individual error found in DMLException use the *dmlFieldsException* method.
+
+**Return Value**
+
+Type. LogEventBuilder
+
+#### **> dmlFieldsException(dmlError, dmlErrorIndex)**
+---
+
+This method can be used to log a DML entry of a DMLException with its details onto a log.
+
+**Signature**
+
+`public LogEventBuilder  dmlFieldsException(DmlException dmlError, Integer dmlErrorIndex)`
+
+**Parameters**
+
+*dmlError*
+
+Type: DMLException
+
+*dmlErrorIndex*
+
+Type: Integer
+
+**Return Value**
+
+Type. LogEventBuilder
+
 # Usage
+
+Each LogEventBuilder instance can be stored in a variable of that type or build it to a Log__e instance to modify directly that record.
+
+The Builder pattern allows the developer to fill only the values necesary but without the need of using multiple overloaded method. Just call the ones that will carry information. Each method will return itself allowing to call the next method right away. Finish the building process with the build method.
+
+Examples:
+
+    Log__e newEvent = new LogEventBuilder()
+    .message('Debug message')
+    .build();
+---
+    `Log__e newEvent = new LogEventBuilder()
+        .message('Debug message')
+        .type(LogEventBuilder.EventType.ERROR)
+        .userId(UserInfo.getUserId()
+        .build());`
+---
+    List<Account> nameAccounts = new List<Account>();
+
+    for(Integer i = 0; i<10; i++)
+    {
+        nameAccounts.add(new Account());
+    }
+
+    try
+    {
+        insert nameAccounts;
+    }
+    catch(DMLException dmlError)
+    {
+        List<Log__e> errorEvents = new List<Log__e>();
+
+        errorEvents.add(new LogEventBuilder.exception(dmlError));
+
+        for(Integer i = 0; i < dmlError.getNumDml(); i++)
+        {
+            errorEvents.add(new LogEventBuilder.dmlFieldsException(dmlError,i));
+        }
+
+        EventBus.publish(errorEvents);
+    }
+
 
 # Files
 

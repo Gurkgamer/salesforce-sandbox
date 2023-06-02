@@ -12,7 +12,7 @@
  *                          .submit();
  * @author            : jgallaga
  * @group             : Seidor
- * @last modified on  : 05-31-2023
+ * @last modified on  : 06-02-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class LogEventBuilder
@@ -176,18 +176,18 @@ public with sharing class LogEventBuilder
      * @param       error
      *              Excepción que se quiere registrar.
      */
-    public LogEventBuilder exception(Exception error)
+    public LogEventBuilder exception(Exception exceptionError)
     {
-        if(error == null)
+        if(exceptionError == null)
         {
             return this;
         }
 
         this.type                   = EventType.ERROR;
-        this.exceptionMessage       = error.getMessage();
-        this.exceptionStackTrace    = error.getStackTraceString();
-        this.exceptionCause         = String.valueOf(error.getCause());
-        this.exceptionType          = error.getTypeName();
+        this.exceptionMessage       = exceptionError.getMessage();
+        this.exceptionStackTrace    = exceptionError.getStackTraceString();
+        this.exceptionCause         = String.valueOf(exceptionError.getCause());
+        this.exceptionType          = exceptionError.getTypeName();
         return this;
     }
 
