@@ -378,11 +378,11 @@ Examples:
     {
         List<Log__e> errorEvents = new List<Log__e>();
 
-        errorEvents.add(new LogEventBuilder.exception(dmlError));
+        errorEvents.add(new LogEventBuilder.exception(dmlError).build());
 
         for(Integer i = 0; i < dmlError.getNumDml(); i++)
         {
-            errorEvents.add(new LogEventBuilder.dmlFieldsException(dmlError,i));
+            errorEvents.add(new LogEventBuilder.dmlFieldsException(dmlError,i).build());
         }
 
         EventBus.publish(errorEvents);
