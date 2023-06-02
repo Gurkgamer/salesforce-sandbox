@@ -40,6 +40,6 @@ $RECYCLE.BIN/
 .env
 
 # Otros
-.vscode
-.husky
+.vscode/
+.husky/
 apuntes
