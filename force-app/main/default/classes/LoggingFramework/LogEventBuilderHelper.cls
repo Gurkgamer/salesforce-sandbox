@@ -2,7 +2,7 @@
  * @description       : The LogEventBuilderHelper class provides a convenient way to manage instances of the LogEventBuilder class and publish batches of log events.
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 05-31-2023
+ * @last modified on  : 06-02-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class LogEventBuilderHelper
@@ -49,7 +49,6 @@ public with sharing class LogEventBuilderHelper
 
         return publishResults;
     }
-
 
     /**
      * @description Allows to remove the LogEventBuilder instances that are present in the helper without publishing.
