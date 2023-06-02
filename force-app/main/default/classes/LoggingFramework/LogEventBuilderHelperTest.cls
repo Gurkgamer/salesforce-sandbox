@@ -1,8 +1,8 @@
 /**
- * @description       :
+ * @description       : Test class to verify the functionality of the LogEventBuilderHelper class.
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 05-31-2023
+ * @last modified on  : 06-02-2023
  * @last modified by  : Gurkgamer
 **/
 @IsTest

@@ -172,7 +172,7 @@ This is the platform event entity. You can publish this record to the Event Bus.
 ---
 
 Allows to print into the Salesforce Log files the content of the intance up to that point.
-The log lines will be precededd with a "@@@@@@@@" string.
+The log lines will be precededd with a "@@@@@@@@" string. Only the values with data will be print.
 
 **Signature**
 
@@ -378,11 +378,11 @@ Examples:
     {
         List<Log__e> errorEvents = new List<Log__e>();
 
-        errorEvents.add(new LogEventBuilder.exception(dmlError).build());
+        errorEvents.add(new LogEventBuilder().exception(dmlError).print().build());
 
         for(Integer i = 0; i < dmlError.getNumDml(); i++)
         {
-            errorEvents.add(new LogEventBuilder.dmlFieldsException(dmlError,i).build());
+            errorEvents.add(new LogEventBuilder().dmlFieldsException(dmlError,i).print().build());
         }
 
         EventBus.publish(errorEvents);

@@ -1,24 +1,22 @@
 /**
- * @description       : Clase que implementa el patrón Builder para poder construir un registro de evento
- *                      segun las necesidades del desarrollador. Para poder rellenar los campos que se
- *                      necesiten, únicamente hay que llamar al método correspondiente en forma de cadena
- *                      para ir pasandole los valores.
- *                      Finalmente es recomendable llamar al método build() para poder recibir de esta
- *                      forma un registro de tipo Log Event.
- *                      Ejemplo:
+ * @description       : Class that implements the Builder pattern to construct an event log record
+ *                      the corresponding method in a chain to pass the values.
+ *                      Finally, it is recommended to call the build() method to receive a Log Event
+ *                      record in return.
+ *                      Example:
  *                          new LogEventBuilder()
- *                          .message('Un Texto')
+ *                          .message('A text')
  *                          .recordID('00138383923')
- *                          .submit();
- * @author            : jgallaga
- * @group             : Seidor
+ *                          .build();
+ * @author            : Gurkgamer
+ * @group             :
  * @last modified on  : 06-02-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class LogEventBuilder
 {
 
-    // Estos campos representan los campos que tiene el evento.
+    // These fields represent the fields that the Log_e entity has
     @TestVisible private String message;
     @TestVisible private String externalId;
     @TestVisible private String sourceClass;
@@ -33,7 +31,7 @@ public with sharing class LogEventBuilder
     @TestVisible private EventType type;
     @TestVisible private Datetime eventTime;
 
-    // Añadir nuevos tipos de evento segun necesidad
+    // Add new types as needed
     public enum EventType
     {
         WARNING,
@@ -43,30 +41,23 @@ public with sharing class LogEventBuilder
     }
 
     /**
-     * @description El constructor de esta clase rellenará algunos valores por defecto
-     *              sobre el momento en el que ocurre el registro del evento.
-     *              Quitando el tipo, el resto de valores no será posible informar
-     *              por parte del desarrollador.
-     *              El valor por defecto del tipo será INFO, se podrá sobreescribir usando
-     *              el método apropiado.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description Constructor of this class.
+     *              Some default values regarding the timing and transation of the event registration
+     *              will be set.
+     *              The default value for the type will be LOG.
      */
     public LogEventBuilder()
     {
-        this.transactionId  = System.Request.getCurrent().getRequestId(); // Permite localizar todos los eventos ocurrido en la misma transacción
+        this.transactionId  = System.Request.getCurrent().getRequestId();
         this.type           = EventType.LOG;
         this.eventTime      = System.now();
     }
 
     /**
-     * @description Método que lanza el evento al bus de eventos de Salesforce.
-     *              Transforma la información recibida hasta este momento al
-     *              evento de plataforma LogEvent y después se publica.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description Transforms the LogEventBuilder instance into a Log__e
+     *              instance.
      * @return      Log__e
-     *              Devuelve el resultado de la publicación del evento.
+     *              A Log__e platform event record instance
      */
     public Log__e build()
     {
@@ -89,6 +80,9 @@ public with sharing class LogEventBuilder
         return logEvent;
     }
 
+    /**
+     * @description Prints into the Salesforce log the contents of the instance into the Salesfor debud logs.
+     */
     public LogEventBuilder print()
     {
         System.debug('@@@@@@@@');
@@ -114,16 +108,22 @@ public with sharing class LogEventBuilder
         return this;
     }
 
+    /**
+     * @description Utility to print a parameter into the Salesforce debug logs.
+     *              If the parameter is null, it will not be printed.
+     */
     private void printParameter(Object parameter, String parameterName)
     {
-        System.debug(parameterName + ': ' + parameter);
+        if(parameter != null)
+        {
+            System.debug(parameterName + ': ' + parameter);
+        }
     }
 
     /**
-     * Los siguientes métodos permiten informar los campos de la clase
-     * de la forma que el desarrollador necesite. Al devolverse a si mismo
-     * el desarrollador podrá llamar al siguiente método directamente para
-     * ir construyendo el registro de evento que desee.
+     * The following methods allow the developer to populate the fields of the class according to their needs.
+     * By returning itself, the developer can chain the subsequent method calls directly to
+     * construct the desired event record.
      */
 
     public LogEventBuilder message(String message)
@@ -168,12 +168,9 @@ public with sharing class LogEventBuilder
     }
 
     /**
-     * @description Informa los campos de excepción con los detalles sobre el problema.
-     *              El valor de causa puede aparecer como nulo si la excepción
-     *              que se está registrando no fue recogida a causa de otra excepción original.
-     * @author      jgallaga
-     * @date        09/05/2023
-     * @param       error
+     * @description It informs the exception fields with details about the problem.
+     *              The cause value may appear as null if the exception being logged was not caught due to another original exception.
+     * @param       exceptionError
      *              Excepción que se quiere registrar.
      */
     public LogEventBuilder exception(Exception exceptionError)
@@ -192,17 +189,12 @@ public with sharing class LogEventBuilder
     }
 
     /**
-     * @description Informa los campos de excepción DML con la información del elemento de la excepción de DML
-     *              indicado en el índice que recibe. Utilizar este método para identificar cada error del DML
-     *              de forma individual.
-     * @author      jgallaga
-     * @date        09/05/2023
-     * @param       error
-     *              La excepción DML que ha ocurrido, necesario para recoger el elemento de excepción DML
-     *              que interesa informar.
-     * @param       errorIndex
-     *              Posición donde esta la información sobre el problema de DML que se quiere informar. No puede
-     *              ser mayor a los elementos del error de DML para evitar salirle del índice.
+     * @description It populates the DML exception fields with information from the DML exception element indicated by the received index.
+     *              Use this method to individually identify each DML error.
+     * @param       dmlError
+     *              The DML exception that has occurred, necessary to retrieve the DML exception element of interest to report.
+     * @param       dmlErrorIndex
+     *              The position where the information about the DML problem that you want to report is located.
      */
     public LogEventBuilder  dmlFieldsException(DmlException dmlError, Integer dmlErrorIndex)
     {
