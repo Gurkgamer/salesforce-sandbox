@@ -357,11 +357,11 @@ Examples:
     .message('Debug message')
     .build();
 ---
-    `Log__e newEvent = new LogEventBuilder()
-        .message('Debug message')
-        .type(LogEventBuilder.EventType.ERROR)
-        .userId(UserInfo.getUserId()
-        .build());`
+    Log__e newEvent = new LogEventBuilder()
+    .message('Debug message')
+    .type(LogEventBuilder.EventType.ERROR)
+    .userId(UserInfo.getUserId())
+    .build();
 ---
     List<Account> nameAccounts = new List<Account>();
 
