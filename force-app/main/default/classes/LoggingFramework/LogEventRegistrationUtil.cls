@@ -1,22 +1,18 @@
 /**
- * @description       : Clase de utilidades para la gestión de eventos de plataforma Log__e
- * @author            : jgallaga
- * @group             : Seidor
+ * @description       : A utility class for managing Log events in the Log__e platform.
+ * @author            : Gurkgamer
+ * @group             :
  * @last modified on  : 06-02-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class LogEventRegistrationUtil
 {
     /**
-     * @description Método del que a partir de una lista de eventos de plataform de LogEvent
-     *              devuelve una lista de registros Log. Vuelva la información de cada evento
-     *              a un registro.
-     * @author      jgallaga
-     * @date        09/05/2023
+     * @description This method, given a list of LogEvent platform events, returns a list of Log records. It transforms the information of each event into a record.
      * @param       platformEvents
-     *              Listado de eventos de plataforma
+     *              List of Log__e platform events
      */
-    public static List<LogRecord__c> createLogginRecords(List<Log__e> platformEvents)
+    public static List<LogRecord__c> createLoggingRecords(List<Log__e> platformEvents)
     {
         List<LogRecord__c> logRecords = new List<LogRecord__c>();
 

@@ -1,8 +1,8 @@
 /**
- * @description       :
- * @author            : jgallaga
+ * @description       : Tests for LogEventRegistration class.
+ * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 06-02-2023
+ * @last modified on  : 06-03-2023
  * @last modified by  : Gurkgamer
 **/
 @isTest
@@ -10,8 +10,11 @@ public with sharing class LogEventRegistrationUtilTest
 {
     private static final Integer NUM_EVENTS = 40;
 
+    /**
+     * @description Tests the transformation from a list of Log__e record to a LogRecord__c list.
+     */
     @isTest
-    static void test_createLogginRecords_OK()
+    static void test_createLoggingRecords_OK()
     {
         List<Log__e> newEventLogs = new List<Log__e>();
 
@@ -51,16 +54,16 @@ public with sharing class LogEventRegistrationUtilTest
             newEventLogs.add(newEvent);
         }
 
-        List<LogRecord__c> resultingLogRecords;
 
         Test.startTest();
-        resultingLogRecords = LogEventRegistrationUtil.createLogginRecords(newEventLogs);
+        List<LogRecord__c> resultingLogRecords = LogEventRegistrationUtil.createLoggingRecords(newEventLogs);
         Test.stopTest();
 
-        Assert.isTrue(resultingLogRecords != null       , 'El método tendría que haber devuelvo una lista');
-        Assert.isTrue( ! resultingLogRecords.isEmpty()  , 'La lista no puede estar vacía');
+        Assert.isTrue(resultingLogRecords != null       , 'The method must recturn a lista');
+        Assert.isTrue( ! resultingLogRecords.isEmpty()  , 'The list can not be empty');
+        Assert.areEqual(NUM_EVENTS, resultingLogRecords.size(), 'The number of records transformed should match');
 
-        String faultTestMessage = 'El valor de este campo no se ha trasladado correctamente al registro';
+        String faultTestMessage = 'The value of this field has not been transferred correctly to the record';
 
         for(Integer j = 0; j < resultingLogRecords.size(); j++)
         {
@@ -82,30 +85,51 @@ public with sharing class LogEventRegistrationUtilTest
         }
     }
 
+    /**
+     * @description Tests the transformation from a single Log__e record to a LogRecord__c record.
+     */
     @isTest
-    static void test_createLogginRecords_NullParam_OK()
+    static void test_createLoggingRecords_SingleEvent_OK()
     {
-        List<LogRecord__c> testLogs;
+        Log__e newEvent = new Log__e();
 
         Test.startTest();
-        testLogs = LogEventRegistrationUtil.createLogginRecords(null);
+        List<LogRecord__c> resultingLogRecords = LogEventRegistrationUtil.createLoggingRecords(new List<Log__e>{newEvent});
         Test.stopTest();
 
-        Assert.isTrue(testLogs != null      , 'El método no debería devolver un null');
-        Assert.isTrue(testLogs.isEmpty()    , 'La lista de elementos debería estar vacío');
+        Assert.isTrue(resultingLogRecords != null, 'The method must return a list');
+        Assert.isTrue(resultingLogRecords.size() == 1, 'The list should contain a single record');
     }
 
-
+    /**
+     * @description Check that after the method is called with a null parameter, the result returned is an empty list
+     */
     @isTest
-    static void test_createLogginRecords_EmptyList_OK()
+    static void test_createLoggingRecords_NullParam_OK()
     {
         List<LogRecord__c> testLogs;
 
         Test.startTest();
-        testLogs = LogEventRegistrationUtil.createLogginRecords(new List<Log__e>());
+        testLogs = LogEventRegistrationUtil.createLoggingRecords(null);
         Test.stopTest();
 
-        Assert.isTrue(testLogs != null      , 'El método no debería devolver un null');
-        Assert.isTrue(testLogs.isEmpty()    , 'La lista de elementos debería estar vacío');
+        Assert.isTrue(testLogs != null      , 'The method should not return null');
+        Assert.isTrue(testLogs.isEmpty()    , 'The list of elements should be empty.');
+    }
+
+    /**
+     * @description Checks that fom an empty list, an empty list is returned.
+     */
+    @isTest
+    static void test_createLoggingRecords_EmptyList_OK()
+    {
+        List<LogRecord__c> testLogs;
+
+        Test.startTest();
+        testLogs = LogEventRegistrationUtil.createLoggingRecords(new List<Log__e>());
+        Test.stopTest();
+
+        Assert.isTrue(testLogs != null      , 'The method should not return null');
+        Assert.isTrue(testLogs.isEmpty()    , 'The list of elements should be empty.');
     }
 }

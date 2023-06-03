@@ -1,19 +1,15 @@
 /**
- * @description       : Clase que gestiona la insercción de eventos de log como entidad
- *                      Log. Por cada registros que llegue, se vuelcan todos los campos
- *                      a un nuevo registro que se insertará en el sistema.
- *                      Los eventos de plataforma solo tienen el contexto de "After Insert"
- *                      por lo que la clase simula una clase Handler pero solo con los dos
- *                      métodos que puede utilizar. Es por ello que no necesita implementar
- *                      la interfaz ITriggerHandler.
- * @author            : jgallaga
- * @group             : Seidor
- * @last modified on  : 06-02-2023
+ * @description       : Class that manages the insertion of log events as Log entities.
+ *                      For each record received, all fields are transferred to a new record that will be inserted into the system.
+ *                      Platform events only have the "After Insert" context, so the class simulates a Handler class of a Trigger Factory
+ *                      but with only the two methods it can use.
+ * @author            : Gurkgamer
+ * @group             :
+ * @last modified on  : 06-03-2023
  * @last modified by  : Gurkgamer
 **/
 public without sharing class LogEventRegistrationHandler
 {
-    public static List<LogRecord__c> logsToInsert;
 
     public static void afterinsert(List<Log__e> newList)
     {
@@ -22,12 +18,9 @@ public without sharing class LogEventRegistrationHandler
             return;
         }
 
-        logsToInsert = LogEventRegistrationUtil.createLogginRecords(newList);
-    }
+        List<LogRecord__c> logsToInsert = LogEventRegistrationUtil.createLoggingRecords(newList);
 
-    public static void finalDMLAfter()
-    {
-        if(logsToInsert != null && ! logsToInsert.isEmpty())
+        if(! logsToInsert.isEmpty())
         {
             insert logsToInsert;
         }
