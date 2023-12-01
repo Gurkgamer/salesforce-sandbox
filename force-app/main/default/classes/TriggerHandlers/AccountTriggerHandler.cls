@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 05-28-2023
+ * @last modified on  : 12-01-2023
  * @last modified by  : Gurkgamer
  * Modifications Log
  * Ver   Date         Author     Modification
@@ -12,11 +12,7 @@ public with sharing class AccountTriggerHandler implements ITriggerHandler
 {
     public void beforeInsert(List<SObject> newList){}
 
-    public void beforeUpdate(List<SObject> newList, Map<Id,SObject> oldMap)
-    {
-        Map<Account,List<Account>> mergedAccountsWithDeletedMergedAccounts = AccountMergeHandler.getMergedAccountRecords((Map<Id,Account>) Trigger.newMap);
-        List<Account> accountToExternal = AccountMergeHandler.checkImportantFields(mergedAccountsWithDeletedMergedAccounts);
-    }
+    public void beforeUpdate(List<SObject> newList, Map<Id,SObject> oldMap){}
 
     public void beforeDelete(LIst<SObject> oldMap){}
 
