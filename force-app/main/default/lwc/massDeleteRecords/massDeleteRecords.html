@@ -1,0 +1,16 @@
+<!--
+  @description       :
+  @author            : Gurkgamer
+  @group             :
+  @last modified on  : 10-11-2023
+  @last modified by  : Gurkgamer
+-->
+<template>
+    <lightning-card title="Cargar Archivo">
+        <div>
+            <lightning-input type="file" label="Archivo para subir" accept=".txt" onchange={handleFileUpload}></lightning-input>
+            <lightning-button label="Cargar" title="Subir" onclick={startProcessing}></lightning-button>
+        </div>
+        <p>Estado: {estado}</p>
+    </lightning-card>
+</template>
