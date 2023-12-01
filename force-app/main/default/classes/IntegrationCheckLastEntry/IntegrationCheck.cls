@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 02-18-2023
+ * @last modified on  : 12-01-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class IntegrationCheck implements Schedulable
@@ -27,6 +27,7 @@ public with sharing class IntegrationCheck implements Schedulable
                 2=>15,
                 3=>5
             };
+            return frequencyMinutesEachRetry;
         }
         set;
     }
@@ -38,21 +39,13 @@ public with sharing class IntegrationCheck implements Schedulable
 
     public Id enqueueIntegrationCheck()
     {
-        Id enqueueId = System.enqueueJob(this);
+        return System.enqueueJob(this);
     }
 
     public void execute(SchedulableContext sc)
     {
-        List<ExternalRecord__c> lastEntryInIntegration = [SELECT CreatedDate FROM ExternalRecord__c WHERE processed__c = false ORDER BY createddate DESC LIMIT 1];
+        //List<ExternalRecord__c> lastEntryInIntegration = [SELECT CreatedDate FROM ExternalRecord__c WHERE processed__c = false ORDER BY createddate DESC LIMIT 1];
 
-        if(lastEntryInIntegration.isEmpty())
-        {
-
-        }
-        else
-        {
-
-        }
     }
 
 

@@ -2,7 +2,7 @@
  * @description       : Test class that verifies the functional part of the trigger handler for the events.
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 06-03-2023
+ * @last modified on  : 12-01-2023
  * @last modified by  : Gurkgamer
 **/
 @isTest
@@ -28,9 +28,9 @@ public with sharing class LogEventRegistrationHandlerTest
 
         List<LogRecord__c> resultado = [SELECT Message__c FROM LogRecord__c];
 
-        Assert.isTrue( ! result.isEmpty()    , 'The record that was supposed to be created does not exist');
-        Assert.areEqual(1, result.size()     , 'The number of records does not match the expected count.');
-        Assert.areEqual(testEvent.Message__c, result.get(0).Message__c   , 'The message should be the same');
+        Assert.isTrue( ! resultado.isEmpty()    , 'The record that was supposed to be created does not exist');
+        Assert.areEqual(1, resultado.size()     , 'The number of records does not match the expected count.');
+        Assert.areEqual(testEvent.Message__c, resultado.get(0).Message__c   , 'The message should be the same');
     }
 
     /**
