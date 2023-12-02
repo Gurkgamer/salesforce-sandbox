@@ -6,7 +6,7 @@
  *                      to ensure the execution of the corresponding operation based on the context.
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 05-28-2023
+ * @last modified on  : 12-02-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class TriggerFactory
@@ -75,7 +75,6 @@ public with sharing class TriggerFactory
             }
         }
     }
-
 
     /**
      * @description Validates that the specified parameter is not null.
@@ -187,6 +186,11 @@ public with sharing class TriggerFactory
     @TestVisible
     private static void setTriggerSetup(ITriggerHandler handlerInstance, Boolean isEnabled)
     {
+        if(! Test.isRunningTest())
+        {
+            throw new TriggerFactoryException('This method should not be used outside the test context');
+        }
+
         validateParameterNotNull(handlerInstance, 'handlerInstance');
         validateParameterNotNull(isEnabled, 'isEnabled');
 
