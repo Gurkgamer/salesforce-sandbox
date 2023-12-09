@@ -2,13 +2,40 @@
   @description       :
   @author            : jgallaga
   @group             :
-  @last modified on  : 02-19-2023
+  @last modified on  : 12-09-2023
   @last modified by  : Gurkgamer
 -->
 <template>
     <lightning-card title="EmpApi Example" icon-name="custom:custom14">
-        <div class="slds-var-m-around_medium">
-            {lastMessage}
+        <div>
+          <lightning-combobox
+          name="Platform Events"
+          label="Platform Events"
+          placeholder="Seleccciona evento"
+          options={dropboxValues}
+          onchange={handlePEChosseingChange} ></lightning-combobox>
+          <lightning-button name="BLep" label="Subscribe" onclick={handleSubscribe}></lightning-button>
+        </div>
+        <lightning-dual-listbox name="Columnas"
+        label="Selecciona columnas visibles"
+        source-label="Disponibles"
+        selected-label="Elegidas"
+        field-level-help="Selecciona que columnas ver"
+        options={columnOptions}
+        value={selected}
+        onchange={handleChange}></lightning-dual-listbox>
+        <div class="slds-box" >
+        <p>Selected values are: {selected}</p>
+        </div>
+        <div>
+            <div style="height: 300px;overflow-y: auto;">
+                <lightning-datatable
+                        key-field="id"
+                        data={data}
+                        columns={columns}
+                        hide-checkbox-column>
+                </lightning-datatable>
+            </div>
         </div>
     </lightning-card>
 </template>

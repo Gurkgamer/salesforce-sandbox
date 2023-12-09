@@ -2,7 +2,7 @@
  * @description       : The LogEventBuilderHelper class provides a convenient way to manage instances of the LogEventBuilder class and publish batches of log events.
  * @author            : Gurkgamer
  * @group             :
- * @last modified on  : 06-02-2023
+ * @last modified on  : 12-02-2023
  * @last modified by  : Gurkgamer
 **/
 public with sharing class LogEventBuilderHelper
@@ -21,7 +21,7 @@ public with sharing class LogEventBuilderHelper
     public static LogEventBuilder createLogEventBuilder()
     {
         LogEventBuilder newEventBuilderInstance = new LogEventBuilder();
-        builtLogEventBuilders .add(newEventBuilderInstance);
+        builtLogEventBuilders.add(newEventBuilderInstance);
 
         return newEventBuilderInstance;
     }
