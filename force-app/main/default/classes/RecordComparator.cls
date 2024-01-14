@@ -35,6 +35,8 @@ public without sharing class RecordComparator implements Comparator<SObject>
             return nullFieldsResult;
         }
 
+        // https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_enum_Schema_DisplayType.htm
+
         switch on field.getDescribe().getType()
         {
             when String
