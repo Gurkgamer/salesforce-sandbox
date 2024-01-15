@@ -1,15 +1,51 @@
 /**
  * @description       : A utility class for comparing SObjects based on a specified field.
  * @author            : Gurkgamer
- * @last modified on  : 01-14-2024
+ * @last modified on  : 01-15-2024
  * @last modified by  : Gurkgamer
 **/
 public without sharing class RecordComparator implements Comparator<SObject>
 {
     private Schema.SObjectField field;
     private Schema.SObjectType sObjectType;
+    private Integer orderDirection = 1; // Positive is Ascending
+
+    private static Boolean multiCurrencyEnabled = Schema.getGlobalDescribe().containsKey('CurrencyType');
+    private static Map<String, Decimal> currencyConversions
+    {
+        get
+        {
+            if(currencyConversions != null)
+            {
+                return currencyConversions;
+            }
+
+            currencyConversions = new Map<String, Decimal>();
+            String queryCurrencyType = 'SELECT ISOCode, ConversionRate FROM CurrencyType WHERE IsActive=TRUE';
+
+            for(Sobject ct : Database.query(queryCurrencyType))
+            {
+                currencyConversions.put((String) ct.get('ISOCode'), (Decimal) ct.get('ConversionRate'));
+            }
+
+            return currencyConversions;
+        }
+        private set;
+    }
 
     public RecordComparator(Schema.sObjectField fieldName)
+    {
+        setupComparator(fieldName);
+    }
+
+    public RecordComparator(Schema.sObjectField fieldName, Boolean ascending)
+    {
+        setupComparator(fieldName);
+
+        orderDirection = ascending == null || ascending ? 1 : -1;
+    }
+
+    private void setupComparator(Schema.sObjectField fieldName)
     {
         if(fieldName == null)
         {
@@ -22,6 +58,10 @@ public without sharing class RecordComparator implements Comparator<SObject>
 
     public Integer compare(SObject exhibitA, SObject exhibitB)
     {
+        if(exhibitA == null || exhibitB == null)
+        {
+            throw new IllegalArgumentException('Arguments cannot be null.');
+        }
 
         if(exhibitA.getSObjectType() != sObjectType || exhibitB.getSObjectType() != sObjectType)
         {
@@ -32,26 +72,34 @@ public without sharing class RecordComparator implements Comparator<SObject>
 
         if(nullFieldsResult != null)
         {
-            return nullFieldsResult;
+            return nullFieldsResult * orderDirection;
         }
 
         // https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_enum_Schema_DisplayType.htm
+
+        Integer comparisonResult;
 
         switch on field.getDescribe().getType()
         {
             when String
             {
-                return new CompareStrings(field).compare(exhibitA, exhibitB);
+                comparisonResult = compareStrings(exhibitA, exhibitB);
             }
             when Integer, Double
             {
-                return new CompareIntegers(field).compare(exhibitA, exhibitB);
+                comparisonResult = compareInteger(exhibitA, exhibitB);
+            }
+            when Currency
+            {
+                comparisonResult = compareCurrency(exhibitA,exhibitB);
             }
             when else
             {
                 return 0;
             }
         }
+
+        return comparisonResult * orderDirection;
     }
 
     private Integer checkNullFields(SObject exhibitA, SObject exhibitB)
@@ -72,77 +120,77 @@ public without sharing class RecordComparator implements Comparator<SObject>
         return null;
     }
 
-    private class CompareStrings
+    private Integer compareStrings(SObject exhibitA, SObject exhibitB)
     {
-        private Schema.sObjectField field;
+        String aField;
+        String bField;
 
-        /**
-         * @param schemaField The field to be used for comparison.
-         */
-        public CompareStrings(Schema.sObjectField schemaField)
-        {
-            field = schemaField;
-        }
+        aField = (String) exhibitA.get(field);
+        bField = (String) exhibitB.get(field);
 
-        /**
-         * @param exhibitA The first SObject to compare.
-         * @param exhibitB The second SObject to compare.
-         * @return 0 if both fields are null, -1 if exhibitA is null, 1 if exhibitB is null, or the lexicographical comparison result.
-         * @throws IllegalArgumentException if the SObject types do not match the expected type.
-         * @throws SObjectException if an error occurs during field retrieval.
-         */
-        public Integer compare(SObject exhibitA, SObject exhibitB)
-        {
-            String aField;
-            String bField;
-
-            try
-            {
-                aField = (String) exhibitA.get(field);
-                bField = (String) exhibitB.get(field);
-            }
-            catch(SObjectException error)
-            {
-                throw new SObjectException('The field ' + field + ' could not be retrieved. ' + error.getStackTraceString());
-            }
-
-            return aField.compareTo(bField);
-        }
+        return aField.compareTo(bField);
     }
 
-    public class CompareIntegers
+    private Integer compareInteger(SObject exhibitA, SObject exhibitB)
     {
-        private Schema.sObjectField field;
+        Double aField = (Double) exhibitA.get(field);
+        Double bField = (Double) exhibitB.get(field);
 
-        public CompareIntegers(Schema.SObjectField schemaField)
+        if(aField < bField)
         {
-            field = schemaField;
+            return -1;
+        }
+        else if(aField > bField)
+        {
+            return 1;
         }
 
-        public Integer compare(SObject exhibitA, SObject exhibitB)
-        {
-            try
-            {
-                Double aField = (Double) exhibitA.get(field);
-                Double bField = (Double) exhibitB.get(field);
-
-                if(aField == bField)
-                {
-                    return 0;
-                }
-                else if(aField < bField)
-                {
-                    return -1;
-                }
-
-                return 1;
-            }
-            catch(SObjectException error)
-            {
-                throw new SObjectException('The field ' + field + ' could not be retrieved. ' + error.getStackTraceString());
-            }
-        }
-
+        return 0;
     }
 
+    private Integer compareCurrency(SObject exhibitA, SObject exhibitB)
+    {
+        Decimal aField = (Decimal) exhibitA.get(field);
+        Decimal bField = (Decimal) exhibitB.get(field);
+
+        if(multiCurrencyEnabled)
+        {
+            return compareCurrencyWithConversion(exhibitA, exhibitB);
+        }
+
+        if(aField < bField)
+        {
+            return -1;
+        }
+        else if(aField > bField)
+        {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private Integer compareCurrencyWithConversion(SObject exhibitA, SObject exhibitB)
+    {
+        map<string,decimal> queriedcurrencies = new map<string,decimal>();
+
+        String queryCurrencyType = 'SELECT ISOCode, ConversionRate FROM CurrencyType WHERE IsActive=TRUE';
+
+        String currencyCodeA = (String) exhibitA.get('CurrentIsoCode');
+        Decimal convertedValueA = (Decimal) exhibitA.get(field) / currencyConversions.get(currencyCodeA);
+
+        String currencyCodeB = (String) exhibitB.get('CurrentIsoCode');
+        Decimal convertedValueB = (Decimal) exhibitB.get(field) / currencyConversions.get(currencyCodeB);
+
+        if(convertedValueA == convertedValueB)
+        {
+            return 0;
+        }
+        else if(convertedValueA < convertedValueB)
+        {
+            return -1;
+        }
+
+        return 1;
+    }
 }
