@@ -10,6 +10,7 @@ public without sharing class RecordComparator implements Comparator<SObject>
     private Schema.SObjectType sObjectType;
     private Integer orderDirection = 1; // Positive is Ascending
 
+    // Check is multiCurrency is active to enable comparisons between currencies
     private static Boolean multiCurrencyEnabled = Schema.getGlobalDescribe().containsKey('CurrencyType');
     private static Map<String, Decimal> currencyConversions
     {
@@ -33,6 +34,8 @@ public without sharing class RecordComparator implements Comparator<SObject>
         private set;
     }
 
+    // #region Constructor
+
     public RecordComparator(Schema.sObjectField fieldName)
     {
         setupComparator(fieldName);
@@ -55,6 +58,10 @@ public without sharing class RecordComparator implements Comparator<SObject>
         field = fieldName;
         sObjectType = fieldName.getDescribe().getSObjectType();
     }
+
+    // #endregion
+
+    // #region Comparator implementation
 
     public Integer compare(SObject exhibitA, SObject exhibitB)
     {
@@ -81,17 +88,24 @@ public without sharing class RecordComparator implements Comparator<SObject>
 
         switch on field.getDescribe().getType()
         {
-            when String
+            when String, Id, Picklist
             {
                 comparisonResult = compareStrings(exhibitA, exhibitB);
             }
-            when Integer, Double
+            when Integer, Double, Long
             {
                 comparisonResult = compareInteger(exhibitA, exhibitB);
             }
             when Currency
             {
-                comparisonResult = compareCurrency(exhibitA,exhibitB);
+                if(multiCurrencyEnabled)
+                {
+                    comparisonResult = compareCurrencyWithConversion(exhibitA, exhibitB);
+                }
+                else
+                {
+                    comparisonResult = compareCurrency(exhibitA,exhibitB);
+                }
             }
             when else
             {
@@ -119,6 +133,8 @@ public without sharing class RecordComparator implements Comparator<SObject>
 
         return null;
     }
+
+    // #endregion
 
     private Integer compareStrings(SObject exhibitA, SObject exhibitB)
     {
@@ -152,11 +168,6 @@ public without sharing class RecordComparator implements Comparator<SObject>
     {
         Decimal aField = (Decimal) exhibitA.get(field);
         Decimal bField = (Decimal) exhibitB.get(field);
-
-        if(multiCurrencyEnabled)
-        {
-            return compareCurrencyWithConversion(exhibitA, exhibitB);
-        }
 
         if(aField < bField)
         {
