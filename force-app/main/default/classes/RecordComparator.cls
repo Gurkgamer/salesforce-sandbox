@@ -1,7 +1,7 @@
 /**
  * @description       : A utility class for comparing SObjects based on a specified field.
  * @author            : Gurkgamer
- * @last modified on  : 01-15-2024
+ * @last modified on  : 01-18-2024
  * @last modified by  : Gurkgamer
 **/
 public without sharing class RecordComparator implements Comparator<SObject>
@@ -9,8 +9,9 @@ public without sharing class RecordComparator implements Comparator<SObject>
     private Schema.SObjectField field;
     private Schema.SObjectType sObjectType;
     private Integer orderDirection = 1; // Positive is Ascending
+    private Boolean localeSort = false; // Sorts text fields by the users locale setting
 
-    // Check is multiCurrency is active to enable comparisons between currencies
+    // Check if multiCurrency is active to enable comparisons between currencies
     private static Boolean multiCurrencyEnabled = Schema.getGlobalDescribe().containsKey('CurrencyType');
     private static Map<String, Decimal> currencyConversions
     {
@@ -38,18 +39,6 @@ public without sharing class RecordComparator implements Comparator<SObject>
 
     public RecordComparator(Schema.sObjectField fieldName)
     {
-        setupComparator(fieldName);
-    }
-
-    public RecordComparator(Schema.sObjectField fieldName, Boolean ascending)
-    {
-        setupComparator(fieldName);
-
-        orderDirection = ascending == null || ascending ? 1 : -1;
-    }
-
-    private void setupComparator(Schema.sObjectField fieldName)
-    {
         if(fieldName == null)
         {
             throw new IllegalArgumentException('Null value received. A valid field must be provided');
@@ -57,6 +46,16 @@ public without sharing class RecordComparator implements Comparator<SObject>
 
         field = fieldName;
         sObjectType = fieldName.getDescribe().getSObjectType();
+    }
+
+    public void sortDescending()
+    {
+        orderDirection = -1;
+    }
+
+    public void sortByLocale()
+    {
+        localeSort = true;
     }
 
     // #endregion
@@ -88,9 +87,16 @@ public without sharing class RecordComparator implements Comparator<SObject>
 
         switch on field.getDescribe().getType()
         {
-            when String, Id, Picklist
+            when String, Id, Picklist, Address
             {
-                comparisonResult = compareStrings(exhibitA, exhibitB);
+                if(localeSort)
+                {
+                    comparisonResult = compareStringByLocale(exhibitA, exhibitB);
+                }
+                else
+                {
+                    comparisonResult = compareStrings(exhibitA, exhibitB);
+                }
             }
             when Integer, Double, Long
             {
@@ -138,13 +144,27 @@ public without sharing class RecordComparator implements Comparator<SObject>
 
     private Integer compareStrings(SObject exhibitA, SObject exhibitB)
     {
-        String aField;
-        String bField;
-
-        aField = (String) exhibitA.get(field);
-        bField = (String) exhibitB.get(field);
+        String aField = (String) exhibitA.get(field);
+        String bField = (String) exhibitB.get(field);
 
         return aField.compareTo(bField);
+    }
+
+    private Integer compareStringByLocale(SObject exhibitA, Sobject exhibitB)
+    {
+        String aField = (String) exhibitA.get(field);
+        String bField = (String) exhibitB.get(field);
+
+        List<String> valuesToSort = new List<String>{aField,bField};
+        Collator localeSorter = Collator.getInstance();
+        valuesToSort.sort(localeSorter);
+
+        if(valuesToSort.get(0) == aField)
+        {
+            return -1;
+        }
+
+        return 1;
     }
 
     private Integer compareInteger(SObject exhibitA, SObject exhibitB)
@@ -193,15 +213,15 @@ public without sharing class RecordComparator implements Comparator<SObject>
         String currencyCodeB = (String) exhibitB.get('CurrentIsoCode');
         Decimal convertedValueB = (Decimal) exhibitB.get(field) / currencyConversions.get(currencyCodeB);
 
-        if(convertedValueA == convertedValueB)
-        {
-            return 0;
-        }
-        else if(convertedValueA < convertedValueB)
+        if(convertedValueA < convertedValueB)
         {
             return -1;
         }
+        else if(convertedValueA > convertedValueB)
+        {
+            return 1;
+        }
 
-        return 1;
+        return 0;
     }
 }
