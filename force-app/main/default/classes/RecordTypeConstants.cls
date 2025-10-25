@@ -12,7 +12,7 @@ public with sharing class RecordTypeConstants
 
         if( ! sObjectRecordTypeNames.containsKey(entity))
         {
-            sObjectRecordTypeNames.put(entity, entity.getDescribe().getRecordTypeInfosByName());
+            sObjectRecordTypeNames.put(entity, entity.getDescribe().getRecordTypeInfosByDeveloperName());
         }
 
         String recordTypeName = recordType.getName();
@@ -31,7 +31,7 @@ public with sharing class RecordTypeConstants
     {
         private Schema.SObjectType accountType = Account.sObjectType;
         private AccountTR(){}
-        public final RecordTypeData BUSINES_SACCOUNT = new RecordTypeEntry(accountType, 'Business_Account');
+        public final RecordTypeData COMPANY = new RecordTypeEntry(accountType, 'Company');
     }
 
     public class PersonAccountTR
