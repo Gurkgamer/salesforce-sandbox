@@ -2,11 +2,44 @@ public with sharing class RecordTypeConstants
 {
     private static Map<Schema.SObjectType, Map<String, Schema.RecordTypeInfo>> sObjectRecordTypeNames = new Map<Schema.SObjectType, Map<String,Schema.RecordTypeInfo>>();
 
-    public static AccountTR AccountRecordTypes = new AccountTR();
-    public static PersonAccountTR PersonAccountRecordTypes = new PersonAccountTR();
-    public static LeadRT LeadRecordTypes = new LeadRT();
+    public static AccountTR AccountRecordTypes
+    {
+        get
+        {
+            if(AccountRecordTypes == null)
+            {
+                AccountRecordTypes = new AccountTR();
+            }
+            return AccountRecordTypes;
+        }
+        private set;
+    }
+    public static PersonAccountTR PersonAccountRecordTypes
+    {
+        get
+        {
+            if(PersonAccountRecordTypes == null)
+            {
+                PersonAccountRecordTypes = new PersonAccountTR();
+            }
+            return PersonAccountRecordTypes;
+        }
+        private set;
+    }
+    public static LeadRT LeadRecordTypes
+    {
+        get
+        {
+            if(LeadRecordTypes == null)
+            {
+                LeadRecordTypes = new LeadRT();
+            }
+            return LeadRecordTypes;
+        }
+        private set;
+    }
 
-    public static Id getRecordTypeID(RecordTypeData recordType)
+    private static Id getRecordTypeID(RecordTypeData recordType)
     {
         Schema.SObjectType entity = recordType.getSObjectType();
 
@@ -31,14 +64,20 @@ public with sharing class RecordTypeConstants
     {
         private Schema.SObjectType accountType = Account.sObjectType;
         private AccountTR(){}
-        public final RecordTypeData COMPANY = new RecordTypeEntry(accountType, 'Company');
+        private final RecordTypeData COMPANY_RTD = new RecordTypeEntry(accountType, 'Company');
+        private final RecordTypeData TEST_RTD = new RecordTypeEntry(accountType, 'MadeUpForTestPurpose');
+
+        public Id COMPANY { get { return getRecordTypeID(COMPANY_RTD); } private set; }
+        public Id TEST { get { return getRecordTypeID(TEST_RTD); } private set; }
     }
 
     public class PersonAccountTR
     {
         private Schema.SObjectType accountType = Account.sObjectType;
         private PersonAccountTR(){}
-        // public final RecordTypeData PERSON_ACCOUNT = new RecordTypeEntry(accountType, 'PersonAccount');
+        private final RecordTypeData PERSON_ACCOUNT_RTD = new RecordTypeEntry(accountType, 'PersonAccount');
+
+        public Id PERSON_ACCOUNT { get { return getRecordTypeID(PERSON_ACCOUNT_RTD); } private set;}
     }
 
     public class LeadRT
@@ -47,7 +86,7 @@ public with sharing class RecordTypeConstants
         private LeadRT(){}
     }
 
-    public interface RecordTypeData
+    private interface RecordTypeData
     {
         String getName();
         Schema.SObjectType getSObjectType();
