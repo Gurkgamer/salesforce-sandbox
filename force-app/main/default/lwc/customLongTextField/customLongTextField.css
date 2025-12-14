@@ -1,0 +1,7 @@
+.custom-richtext {
+    height: 250px;
+}
+
+.custom-richtext .slds-rich-text-editor__textarea {
+    height: 200px !important;
+}

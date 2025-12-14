@@ -1,5 +1,7 @@
 import { LightningElement,track } from 'lwc';
 import { subscribe, unsubscribe} from 'lightning/empApi';
+import runServerAction from '@salesforce/apex/EventViewerController.runServerAction';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class EventViewer extends LightningElement
 {
@@ -9,11 +11,13 @@ export default class EventViewer extends LightningElement
 
     connectedCallback()
     {
+        console.log('Start');
         this.subscribeToLogEvent();
     }
 
     subscribeToLogEvent()
     {
+        console.log('supSubcribelog');
         this.sfLogEventSubscription = subscribe(this.sfLogEvent,-1,this.handleEvent.bind(this))
         .then(response =>
             {
@@ -40,6 +44,37 @@ export default class EventViewer extends LightningElement
         catch(error)
         {
             console.log('ERROR: '+ error.message);
+        }
+    }
+
+    async handleEventSubscription()
+    {
+        subscribeToLogEvent();
+    }
+
+    async handleRunServerAction() {
+        try {
+            const contextId = null; // replace with a real value if needed
+            const result = await runServerAction({ contextId });
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Apex executed',
+                    message: result,
+                    variant: 'success'
+                })
+            );
+        } catch (error) {
+            // Surface the error
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Apex error',
+                    message: error?.body?.message || error.message || 'Unknown error',
+                    variant: 'error'
+                })
+            );
+            // And log for debugging
+            // eslint-disable-next-line no-console
+            console.error('runServerAction error', error);
         }
     }
 

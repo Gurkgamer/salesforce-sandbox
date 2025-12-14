@@ -1,0 +1,29 @@
+<template>
+    <lightning-record-edit-form
+        record-id={recordId}
+        object-api-name={objectApiName}
+        onsubmit={handleSubmit}
+        onsuccess={handleSuccess}
+        onerror={handleError}
+    >
+        <div class="slds-form-element">
+            <label class="slds-form-element__label">{label}</label>
+            <div class="slds-form-element__control">
+
+                <!-- RICH TEXT EDITOR -->
+                <lightning-input-rich-text
+                    value={value}
+                    onchange={handleChange}
+                    class="custom-richtext"
+                ></lightning-input-rich-text>
+
+            </div>
+        </div>
+
+        <lightning-button
+            type="submit"
+            label="Guardar"
+            class="slds-m-top_small"
+        ></lightning-button>
+    </lightning-record-edit-form>
+</template>
